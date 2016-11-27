@@ -6,10 +6,10 @@ using Kubernetes;
 
 public class PodInfo : MonoBehaviour {
 
-	string encodedString = "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
-
-	public Items item = new Items();
+	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
+	
 	public List<Items> itemList = new List<Items>();
+	public List<Status> statusList = new List<Status>();
 
 	public void BuildJSON(string encodedString) {
 		JSONObject podsList = new JSONObject(encodedString);
@@ -19,9 +19,10 @@ public class PodInfo : MonoBehaviour {
 			foreach (JSONObject thisItem in itemsList.list) {
 				Debug.Log(thisItem);
 				Metadata metadata = MetadataJSON(thisItem);
-				Items _item = new Items(metadata, thisItem["spec"].ToString(), thisItem["status"].ToString());
-				item = _item;
-				itemList.Add(item);
+				Status status = StatusJSON(thisItem);
+				Spec spec = SpecJSON(thisItem);
+				Items _item = new Items(metadata, spec, status);
+				itemList.Add(_item);
 				}
 			},
 			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
@@ -29,12 +30,14 @@ public class PodInfo : MonoBehaviour {
 			}
 		);
 
+
+
 	}
 
 	public Metadata MetadataJSON(JSONObject metadata) {
 		Metadata _meta_ = new Metadata ();
 		metadata.GetField ("metadata", delegate(JSONObject metadatas) {
-			Debug.Log (metadatas ["selfLink"]);
+			//Debug.Log (metadatas ["selfLink"]);
 			_meta_ = new Metadata (
 				metadatas ["name"].ToString ().Replace("\"", ""),
 				metadatas ["namespace"].ToString ().Replace("\"", ""),
@@ -45,6 +48,50 @@ public class PodInfo : MonoBehaviour {
 			);
 		});
 		return _meta_;
+	}
+
+
+	public Status StatusJSON(JSONObject status) {
+		Status _status_ = new Status ();
+		status.GetField ("status", delegate(JSONObject statuses) {
+			//Debug.Log (metadatas ["selfLink"]);
+			_status_ = new Status (
+				statuses ["phase"].ToString ().Replace("\"", ""),
+				statuses ["conditions"].ToString ().Replace("\"", ""),
+				statuses ["hostIP"].ToString ().Replace("\"", ""),
+				statuses ["podIP"].ToString ().Replace("\"", ""),
+				statuses ["startTime"].ToString ().Replace("\"", ""),
+				statuses ["containerStatuses"].ToString ().Replace("\"", "")
+				);
+		});
+		return _status_;
+	}
+
+
+	public Spec SpecJSON(JSONObject spec) {
+		Spec _spec_ = new Spec ();
+		spec.GetField ("spec", delegate(JSONObject specs) {
+			//Debug.Log (metadatas ["selfLink"]);
+			_spec_ = new Spec (
+				specs ["volumes"].ToString ().Replace("\"", ""),
+				specs ["containers"].ToString ().Replace("\"", ""),
+				specs ["nodeName"].ToString ().Replace("\"", "")
+				);
+		});
+		return _spec_;
+	}
+
+	public Containers ContainersJSON(JSONObject container) {
+		Containers _container_ = new Containers ();
+		container.GetField ("containers", delegate(JSONObject containers) {
+			_container_ = new Containers (
+				containers ["name"].ToString ().Replace("\"", ""),
+				containers ["image"].ToString ().Replace("\"", ""),
+				containers ["resources"].ToString ().Replace("\"", ""),
+				containers ["volumeMounts"].ToString ().Replace("\"", "")
+				);
+		});
+		return _container_;
 	}
 
 	/*void accessData(JSONObject obj){
