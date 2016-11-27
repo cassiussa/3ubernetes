@@ -2,14 +2,17 @@
 using UnityEngine;
 using System.Collections;
 
-public class ExampleClass : MonoBehaviour {
+public class NetworkClass : MonoBehaviour {
+
+	public PodInfo podInfo;
 
 	public string url = "http://supercass.com/bah.php";
-	public string receivedText;
-	public string _cachedReceivedText;
+	 string receivedText;
+	 string _cachedReceivedText;
 
 	WWW www;
 	void Start() {
+		podInfo = GetComponent<PodInfo> ();
 		www = new WWW(url);
 		//yield return www;
 		//text = www.text;
@@ -19,8 +22,9 @@ public class ExampleClass : MonoBehaviour {
 
 	void Update() {
 		if (www.isDone) {
-			receivedText = www.text;
+			receivedText = www.text;	
 			if (receivedText != _cachedReceivedText) {
+				podInfo.BuildJSON(receivedText);  // To PodInfo.cs
 				_cachedReceivedText = receivedText;
 				Debug.Log (receivedText);
 			}
