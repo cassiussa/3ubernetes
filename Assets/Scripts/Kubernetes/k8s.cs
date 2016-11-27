@@ -24,13 +24,17 @@ namespace Kubernetes {
 			this.spec = spec;
 			this.status = status;
 		}
+		public Items() {  // Allow for New() instantiation
+			this.metadata = new Metadata();
+			this.spec = "";
+			this.status = "";
+		}
 	}
 
 	// PodList -> Items -> Metadata
 	[System.Serializable] // Show it in the Inspector
 	public class Metadata {
 		public string name;
-		//public string generateName;
 		public string Namespace;
 		public string selfLink;
 		public string resourceVersion;
@@ -40,12 +44,19 @@ namespace Kubernetes {
 		// Constructors
 		public Metadata(string name, string Namespace, string selfLink, string resourceVersion, string creationTimestamp, string labels) {
 			this.name = name;
-			//this.generateName = generateName;
 			this.Namespace = Namespace;
 			this.selfLink = selfLink;
 			this.resourceVersion = resourceVersion;
 			this.creationTimestamp = creationTimestamp;
 			this.labels = labels;
+		}
+		public Metadata() {  // Allow for New() instantiation
+			this.name = "";
+			this.Namespace = "";
+			this.selfLink = "";
+			this.resourceVersion = "";
+			this.creationTimestamp = "";
+			this.labels = "";
 		}
 	}
 
@@ -61,6 +72,11 @@ namespace Kubernetes {
 			this.volumes = volumes;
 			this.containers = containers;
 			this.nodeName = nodeName;
+		}
+		public Spec() {  // Allow for New() instantiation
+			this.volumes = "";
+			this.containers = new Containers();
+			this.nodeName = "";
 		}
 	}
 
@@ -79,6 +95,12 @@ namespace Kubernetes {
 			this.image = image;
 			this.resources = resources;
 			this.volumeMounts = volumeMounts;
+		}
+		public Containers() {  // Allow for New() instantiation
+			this.name = "";
+			this.image = "";
+			this.resources = "";
+			this.volumeMounts = "";
 		}
 	}
 }

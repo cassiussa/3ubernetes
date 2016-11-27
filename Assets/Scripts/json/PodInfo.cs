@@ -8,7 +8,7 @@ public class PodInfo : MonoBehaviour {
 
 	string encodedString = "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
 
-	public Items item;
+	public Items item = new Items();
 	public List<Items> itemList = new List<Items>();
 
 	public void BuildJSON(string encodedString) {
@@ -32,7 +32,7 @@ public class PodInfo : MonoBehaviour {
 	}
 
 	public Metadata MetadataJSON(JSONObject metadata) {
-		Metadata _meta_ = new Metadata ("", "", "", "", "", "");
+		Metadata _meta_ = new Metadata ();
 		metadata.GetField ("metadata", delegate(JSONObject metadatas) {
 			Debug.Log (metadatas ["selfLink"]);
 			_meta_ = new Metadata (
