@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; // for List types
 
 /*
  * 
@@ -87,10 +88,10 @@ namespace Kubernetes {
 		public string name;
 		public string image;
 		public string resources;
-		public string volumeMounts;
+		public List<VolumeMounts> volumeMounts;
 		
 		// Constructors
-		public Containers(string name, string image, string resources, string volumeMounts) {
+		public Containers(string name, string image, string resources, List<VolumeMounts> volumeMounts) {
 			this.name = name;
 			this.image = image;
 			this.resources = resources;
@@ -100,7 +101,7 @@ namespace Kubernetes {
 			this.name = "";
 			this.image = "";
 			this.resources = "";
-			this.volumeMounts = "";
+			this.volumeMounts = new List<VolumeMounts>();
 		}
 	}
 
@@ -108,14 +109,14 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class Status {
 		public string phase;
-		public string conditions;
+		public Conditions conditions;
 		public string hostIP;
 		public string podIP;
 		public string startTime;
 		public string containerStatuses;
 		
 		// Constructors
-		public Status(string phase, string conditions, string hostIP, string podIP, string startTime, string containerStatuses) {
+		public Status(string phase, Conditions conditions, string hostIP, string podIP, string startTime, string containerStatuses) {
 			this.phase = phase;
 			this.conditions = conditions;
 			this.hostIP = hostIP;
@@ -125,11 +126,64 @@ namespace Kubernetes {
 		}
 		public Status() {  // Allow for New() instantiation
 			this.phase = "";
-			this.conditions = "";
+			this.conditions = new Conditions();
 			this.hostIP = "";
 			this.podIP = "";
 			this.startTime = "";
 			this.containerStatuses = "";
+		}
+	}
+
+	// PodList -> Items -> Spec -> Conditions
+	[System.Serializable] // Show it in the Inspector
+	public class Conditions {
+		public string type;
+		public string status;
+		public string lastProbeTime;
+		public string lastTransitionTime;
+		
+		// Constructors
+		public Conditions(string type, string status, string lastProbeTime, string lastTransitionTime) {
+			this.type = type;
+			this.status = status;
+			this.lastProbeTime = lastProbeTime;
+			this.lastTransitionTime = lastTransitionTime;
+		}
+		public Conditions() {  // Allow for New() instantiation
+			this.type = "";
+			this.status = "";
+			this.lastProbeTime = "";
+			this.lastTransitionTime = "";
+		}
+	}
+
+	// PodList -> Items -> Spec -> Containers -> volumeMounts
+	[System.Serializable] // Show it in the Inspector
+	public class VolumeMounts {
+		public string name;
+		public bool readOnly;
+		public string mountPath;
+		
+		// Constructors
+		public VolumeMounts(string name, bool readOnly, string mountPath) {
+			this.name = name;
+			this.readOnly = readOnly;
+			this.mountPath = mountPath;
+		}
+		public VolumeMounts() {  // Allow for New() instantiation
+			this.name = "";
+			this.readOnly = false;
+			this.mountPath = "";
+		}
+	}
+
+	// PodList -> Items -> Spec -> Containers -> volumeMounts(List)
+	[System.Serializable] // Show it in the Inspector
+	public class VolumeMountsList {
+		public List<VolumeMounts> volumeMounts = new List<VolumeMounts>();
+		// Constructor
+		public VolumeMountsList(VolumeMounts volumeMounts) {
+			//this.volumeMounts.Add (volumeMounts);
 		}
 	}
 

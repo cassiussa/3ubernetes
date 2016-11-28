@@ -36,10 +36,10 @@ public class PodInfo : MonoBehaviour {
 
 
 	public Metadata MetadataJSON(JSONObject metadata) {
-		Metadata _meta_ = new Metadata ();
+		Metadata _meta = new Metadata ();
 		metadata.GetField ("metadata", delegate(JSONObject metadatas) {
 			//Debug.Log (metadatas ["selfLink"]);
-			_meta_ = new Metadata (
+			_meta = new Metadata (
 				metadatas ["name"].ToString ().Replace("\"", ""),
 				metadatas ["namespace"].ToString ().Replace("\"", ""),
 				metadatas ["selfLink"].ToString ().Replace("\"", ""),
@@ -48,56 +48,94 @@ public class PodInfo : MonoBehaviour {
 				metadatas ["labels"].ToString ()
 			);
 		});
-		return _meta_;
+		return _meta;
 	}
 
 	public Spec SpecJSON(JSONObject spec) {
-		Spec _spec_ = new Spec ();
+		Spec _spec = new Spec ();
 		spec.GetField ("spec", delegate(JSONObject specs) {
 			Containers containers = ContainersJSON(specs);
-
-			_spec_ = new Spec (
+			_spec = new Spec (
 				specs ["volumes"].ToString ().Replace("\"", ""),
 				containers,
 				specs ["nodeName"].ToString ().Replace("\"", "")
 				);
 		});
-		return _spec_;
+		return _spec;
 	}
 
 	public Status StatusJSON(JSONObject status) {
-		Status _status_ = new Status ();
+		Status _status = new Status ();
 		status.GetField ("status", delegate(JSONObject statuses) {
-			//Debug.Log (metadatas ["selfLink"]);
-			_status_ = new Status (
+			Conditions conditions = ConditionsJSON (statuses);
+			_status = new Status (
 				statuses ["phase"].ToString ().Replace("\"", ""),
-				statuses ["conditions"].ToString ().Replace("\"", ""),
+				conditions,
 				statuses ["hostIP"].ToString ().Replace("\"", ""),
 				statuses ["podIP"].ToString ().Replace("\"", ""),
 				statuses ["startTime"].ToString ().Replace("\"", ""),
 				statuses ["containerStatuses"].ToString ().Replace("\"", "")
 				);
 		});
-		return _status_;
+		return _status;
 	}
 
 
 
 
 	public Containers ContainersJSON(JSONObject container) {
-		Containers _container_ = new Containers ();
+		Containers _container = new Containers ();
 		container.GetField ("containers", delegate(JSONObject containers) {
 			foreach(JSONObject thisContainer in containers) {
-				Debug.LogError (thisContainer.ToString());
-				_container_ = new Containers (
+				List<VolumeMounts> thisVolumeMount = VolumeMountsJSON(thisContainer);
+				_container = new Containers (
 					thisContainer ["name"].ToString ().Replace("\"", ""),
 					thisContainer ["image"].ToString ().Replace("\"", ""),
 					thisContainer ["resources"].ToString ().Replace("\"", ""),
-					thisContainer ["volumeMounts"].ToString ().Replace("\"", "")
-				);
+					thisVolumeMount
+					);
 			}
 		});
-		return _container_;
+		return _container;
+	}
+
+	public Conditions ConditionsJSON(JSONObject conditions) {
+		Conditions _condition = new Conditions ();
+		conditions.GetField ("conditions", delegate(JSONObject _conditions) {
+			foreach(JSONObject theseConditions in _conditions) {
+				_condition = new Conditions (
+					theseConditions ["type"].ToString ().Replace("\"", ""),
+					theseConditions ["status"].ToString ().Replace("\"", ""),
+					theseConditions ["lastProbeTime"].ToString ().Replace("\"", ""),
+					theseConditions ["lastTransitionTime"].ToString ().Replace("\"", "")
+					);
+			}
+		});
+		return _condition;
+	}
+
+	public List<VolumeMounts> VolumeMountsJSON(JSONObject volumeMounts) {
+		//VolumeMountsList _volumeMountsList = new VolumeMountsList (new VolumeMounts());
+		List<VolumeMounts> volumeMountsList = new List<VolumeMounts>();
+		volumeMounts.GetField ("volumeMounts", delegate(JSONObject _volumeMounts) {
+			foreach(JSONObject theseVolumeMounts in _volumeMounts) {
+				bool isReadOnly = false;
+				if (theseVolumeMounts ["readOnly"] == null)
+					isReadOnly = false;
+				else if(theseVolumeMounts ["readOnly"].ToString ().Replace("\"", "") == "true")
+					isReadOnly = true;
+				else
+					isReadOnly = false;
+
+				VolumeMounts _volumeMount = new VolumeMounts (
+					theseVolumeMounts ["name"].ToString ().Replace("\"", ""),
+					isReadOnly,
+					theseVolumeMounts ["mountPath"].ToString ().Replace("\"", "")
+				);
+				volumeMountsList.Add(_volumeMount);
+			}
+		});
+		return volumeMountsList;
 	}
 
 	/*void accessData(JSONObject obj){
