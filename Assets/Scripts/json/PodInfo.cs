@@ -55,8 +55,9 @@ public class PodInfo : MonoBehaviour {
 		Spec _spec = new Spec ();
 		spec.GetField ("spec", delegate(JSONObject specs) {
 			Containers containers = ContainersJSON(specs);
+			List<Volumes> volumes = VolumesJSON(specs);
 			_spec = new Spec (
-				specs ["volumes"].ToString ().Replace("\"", ""),
+				volumes,
 				containers,
 				specs ["nodeName"].ToString ().Replace("\"", "")
 				);
@@ -137,6 +138,38 @@ public class PodInfo : MonoBehaviour {
 		});
 		return volumeMountsList;
 	}
+
+
+	public List<Volumes> VolumesJSON(JSONObject volumeMounts) {
+		List<Volumes> volumesList = new List<Volumes>();
+		volumeMounts.GetField ("volumes", delegate(JSONObject volumes) {
+			foreach(JSONObject theseVolumes in volumes) {
+				Volumes _volume = new Volumes ();
+
+				theseVolumes.GetField("name", delegate(JSONObject name) {
+					_volume.name = name.ToString ().Replace("\"", "");
+				}, delegate(string name) { Debug.LogWarning("no name value"); });
+
+				theseVolumes.GetField("secret", delegate(JSONObject secret) {
+					_volume.secret = secret["secretName"].ToString ().Replace("\"", "");
+				}, delegate(string secret) { Debug.LogWarning("no secret value"); });
+
+				theseVolumes.GetField("hostPath", delegate(JSONObject hostPath) {
+					foreach(JSONObject thisHostPath in hostPath) {
+						_volume.hostPath = thisHostPath.ToString ().Replace("\"", "");
+					}
+
+				}, delegate(string hostPath) { Debug.LogWarning("no hostPath value"); });
+
+				volumesList.Add(_volume);
+			}
+		},  // Allow null values
+			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
+				Debug.LogWarning("no itemsList(s)");
+		});
+		return volumesList;
+	}
+
 
 	/*void accessData(JSONObject obj){
 		switch(obj.type){

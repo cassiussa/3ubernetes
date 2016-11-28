@@ -64,18 +64,18 @@ namespace Kubernetes {
 	// PodList -> Items -> Spec
 	[System.Serializable] // Show it in the Inspector
 	public class Spec {
-		public string volumes;
+		public List<Volumes> volumes;
 		public Containers containers;
 		public string nodeName;
 		
 		// Constructors
-		public Spec(string volumes, Containers containers, string nodeName) {
+		public Spec(List<Volumes> volumes, Containers containers, string nodeName) {
 			this.volumes = volumes;
 			this.containers = containers;
 			this.nodeName = nodeName;
 		}
 		public Spec() {  // Allow for New() instantiation
-			this.volumes = "";
+			this.volumes = new List<Volumes>();
 			this.containers = new Containers();
 			this.nodeName = "";
 		}
@@ -104,6 +104,33 @@ namespace Kubernetes {
 			this.volumeMounts = new List<VolumeMounts>();
 		}
 	}
+
+	// PodList -> Items -> Spec -> Volumes
+	[System.Serializable] // Show it in the Inspector
+	public class Volumes {
+		public string name;
+		public string secret;
+		public string hostPath;
+
+		// Constructors
+		public Volumes(string name, string secret, string hostPath) {
+			this.name = name;
+			this.secret = secret;
+			this.hostPath = hostPath;
+		}
+		public Volumes() {  // Allow for New() instantiation
+			this.name = "";
+			this.secret = "";
+			this.hostPath = "";
+		}
+	}
+	// PodList -> Items -> Spec -> Volumes(List)
+	[System.Serializable] // Show it in the Inspector
+	public class VolumesList {
+		public List<Volumes> volumeMounts = new List<Volumes>();
+		public VolumesList(Volumes volumeMounts) {}
+	}
+
 
 	// PodList -> Items -> Spec -> Containers
 	[System.Serializable] // Show it in the Inspector
@@ -157,6 +184,7 @@ namespace Kubernetes {
 		}
 	}
 
+
 	// PodList -> Items -> Spec -> Containers -> volumeMounts
 	[System.Serializable] // Show it in the Inspector
 	public class VolumeMounts {
@@ -181,10 +209,7 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class VolumeMountsList {
 		public List<VolumeMounts> volumeMounts = new List<VolumeMounts>();
-		// Constructor
-		public VolumeMountsList(VolumeMounts volumeMounts) {
-			//this.volumeMounts.Add (volumeMounts);
-		}
+		public VolumeMountsList(VolumeMounts volumeMounts) { }
 	}
 
 
