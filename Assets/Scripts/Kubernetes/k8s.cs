@@ -64,18 +64,18 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class Spec {
 		public string volumes;
-		public string containers;
+		public Containers containers;
 		public string nodeName;
 		
 		// Constructors
-		public Spec(string volumes, string containers, string nodeName) {
+		public Spec(string volumes, Containers containers, string nodeName) {
 			this.volumes = volumes;
 			this.containers = containers;
 			this.nodeName = nodeName;
 		}
 		public Spec() {  // Allow for New() instantiation
 			this.volumes = "";
-			this.containers = "";
+			this.containers = new Containers();
 			this.nodeName = "";
 		}
 	}

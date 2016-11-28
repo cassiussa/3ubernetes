@@ -10,6 +10,7 @@ public class PodInfo : MonoBehaviour {
 	
 	public List<Items> itemList = new List<Items>();
 	public List<Status> statusList = new List<Status>();
+	public List<Containers> containerList = new List<Containers>();
 
 	public void BuildJSON(string encodedString) {
 		JSONObject podsList = new JSONObject(encodedString);
@@ -19,8 +20,9 @@ public class PodInfo : MonoBehaviour {
 			foreach (JSONObject thisItem in itemsList.list) {
 				Debug.Log(thisItem);
 				Metadata metadata = MetadataJSON(thisItem);
-				Status status = StatusJSON(thisItem);
 				Spec spec = SpecJSON(thisItem);
+				Status status = StatusJSON(thisItem);
+				// Now assemble the items
 				Items _item = new Items(metadata, spec, status);
 				itemList.Add(_item);
 				}
@@ -29,10 +31,9 @@ public class PodInfo : MonoBehaviour {
 				Debug.LogWarning("no itemsList(s)");
 			}
 		);
-
-
-
 	}
+
+
 
 	public Metadata MetadataJSON(JSONObject metadata) {
 		Metadata _meta_ = new Metadata ();
@@ -50,6 +51,19 @@ public class PodInfo : MonoBehaviour {
 		return _meta_;
 	}
 
+	public Spec SpecJSON(JSONObject spec) {
+		Spec _spec_ = new Spec ();
+		spec.GetField ("spec", delegate(JSONObject specs) {
+			Containers containers = ContainersJSON(specs);
+
+			_spec_ = new Spec (
+				specs ["volumes"].ToString ().Replace("\"", ""),
+				containers,
+				specs ["nodeName"].ToString ().Replace("\"", "")
+				);
+		});
+		return _spec_;
+	}
 
 	public Status StatusJSON(JSONObject status) {
 		Status _status_ = new Status ();
@@ -68,28 +82,20 @@ public class PodInfo : MonoBehaviour {
 	}
 
 
-	public Spec SpecJSON(JSONObject spec) {
-		Spec _spec_ = new Spec ();
-		spec.GetField ("spec", delegate(JSONObject specs) {
-			//Debug.Log (metadatas ["selfLink"]);
-			_spec_ = new Spec (
-				specs ["volumes"].ToString ().Replace("\"", ""),
-				specs ["containers"].ToString ().Replace("\"", ""),
-				specs ["nodeName"].ToString ().Replace("\"", "")
-				);
-		});
-		return _spec_;
-	}
+
 
 	public Containers ContainersJSON(JSONObject container) {
 		Containers _container_ = new Containers ();
 		container.GetField ("containers", delegate(JSONObject containers) {
-			_container_ = new Containers (
-				containers ["name"].ToString ().Replace("\"", ""),
-				containers ["image"].ToString ().Replace("\"", ""),
-				containers ["resources"].ToString ().Replace("\"", ""),
-				containers ["volumeMounts"].ToString ().Replace("\"", "")
+			foreach(JSONObject thisContainer in containers) {
+				Debug.LogError (thisContainer.ToString());
+				_container_ = new Containers (
+					thisContainer ["name"].ToString ().Replace("\"", ""),
+					thisContainer ["image"].ToString ().Replace("\"", ""),
+					thisContainer ["resources"].ToString ().Replace("\"", ""),
+					thisContainer ["volumeMounts"].ToString ().Replace("\"", "")
 				);
+			}
 		});
 		return _container_;
 	}
