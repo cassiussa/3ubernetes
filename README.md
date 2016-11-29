@@ -13,8 +13,8 @@ https://104.198.50.196/api/v1/pods?watch=true&pretty=true&fieldSelector=metadata
 int : metadata.resourceVersion - when this changes, that means the Pod has changed
 
 #### CONTAINER STARTING UP
-bool : status.containerStatuses.ready
-bool : status.conditions.status
-string : status.conditions.message - Example: "'containers with unready status: [ocelot-nginx]'""
-string : status.conditions.reason - Example: "ContainersNotReady"
+- bool : status.containerStatuses.ready
+- bool : status.conditions.status
+- string : status.conditions.message - Example: "'containers with unready status: [ocelot-nginx]'""
+- string : status.conditions.reason - Example: "ContainersNotReady"
 
