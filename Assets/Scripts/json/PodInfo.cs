@@ -24,7 +24,7 @@ public class PodInfo : MonoBehaviour {
 				Status status = StatusJSON(thisItem);
 				// Now assemble the items
 				Items _item = new Items(metadata.name, metadata, spec, status);
-					pods.Add(_item);
+				pods.Add(_item);
 			}
 			},
 			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
@@ -81,9 +81,6 @@ public class PodInfo : MonoBehaviour {
 		});
 		return _status;
 	}
-
-
-
 
 	public Containers ContainersJSON(JSONObject container) {
 		Containers _container = new Containers ();
@@ -189,8 +186,6 @@ public class PodInfo : MonoBehaviour {
 		return volumesList;
 	}
 
-
-	/******/
 	public List<Labels> LabelsJSON(JSONObject metadata) {
 		List<Labels> labelsList = new List<Labels>();
 		metadata.GetField ("labels", delegate(JSONObject labels) {
@@ -206,9 +201,8 @@ public class PodInfo : MonoBehaviour {
 		});
 		return labelsList;
 	}
-	/******/
 
-	void accessData(JSONObject obj){
+	/*void accessData(JSONObject obj){
 		switch(obj.type){
 		case JSONObject.Type.OBJECT:
 			for(int i = 0; i < obj.list.Count; i++){
@@ -237,6 +231,6 @@ public class PodInfo : MonoBehaviour {
 			break;
 			
 		}
-	}
+	}*/
 	
 }
