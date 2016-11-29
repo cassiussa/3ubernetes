@@ -69,13 +69,14 @@ public class PodInfo : MonoBehaviour {
 		Status _status = new Status ();
 		status.GetField ("status", delegate(JSONObject statuses) {
 			Conditions conditions = ConditionsJSON (statuses);
+			ContainerStatuses containerStatuses = ContainerStatusesJSON (statuses);
 			_status = new Status (
 				statuses ["phase"].ToString ().Replace("\"", ""),
 				conditions,
 				statuses ["hostIP"].ToString ().Replace("\"", ""),
 				statuses ["podIP"].ToString ().Replace("\"", ""),
 				statuses ["startTime"].ToString ().Replace("\"", ""),
-				statuses ["containerStatuses"].ToString ().Replace("\"", "")
+				containerStatuses
 				);
 		});
 		return _status;
@@ -110,6 +111,25 @@ public class PodInfo : MonoBehaviour {
 					theseConditions ["lastProbeTime"].ToString ().Replace("\"", ""),
 					theseConditions ["lastTransitionTime"].ToString ().Replace("\"", "")
 					);
+			}
+		});
+		return _condition;
+	}
+
+	public ContainerStatuses ContainerStatusesJSON(JSONObject containerStatuses) {
+		ContainerStatuses _condition = new ContainerStatuses ();
+		containerStatuses.GetField ("containerStatuses", delegate(JSONObject _containerStatuses) {
+			foreach(JSONObject theseContainerStatuses in _containerStatuses) {
+				_condition = new ContainerStatuses (
+					theseContainerStatuses ["name"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["state"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["lastState"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["ready"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["restartCount"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["image"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["imageID"].ToString ().Replace("\"", ""),
+					theseContainerStatuses ["containerID"].ToString ().Replace("\"", "")
+				);
 			}
 		});
 		return _condition;

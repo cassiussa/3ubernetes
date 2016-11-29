@@ -140,10 +140,10 @@ namespace Kubernetes {
 		public string hostIP;
 		public string podIP;
 		public string startTime;
-		public string containerStatuses;
+		public ContainerStatuses containerStatuses;
 		
 		// Constructors
-		public Status(string phase, Conditions conditions, string hostIP, string podIP, string startTime, string containerStatuses) {
+		public Status(string phase, Conditions conditions, string hostIP, string podIP, string startTime, ContainerStatuses containerStatuses) {
 			this.phase = phase;
 			this.conditions = conditions;
 			this.hostIP = hostIP;
@@ -157,7 +157,7 @@ namespace Kubernetes {
 			this.hostIP = "";
 			this.podIP = "";
 			this.startTime = "";
-			this.containerStatuses = "";
+			this.containerStatuses = new ContainerStatuses();
 		}
 	}
 
@@ -212,5 +212,41 @@ namespace Kubernetes {
 		public VolumeMountsList(VolumeMounts volumeMounts) { }
 	}
 
+
+
+	// PodList -> Items -> Status -> Container Statuses
+	[System.Serializable] // Show it in the Inspector
+	public class ContainerStatuses {
+		public string name;
+		public string state;
+		public string lastState;
+		public string ready;
+		public string restartCount;
+		public string image;
+		public string imageID;
+		public string containerID;
+
+		// Constructors
+		public ContainerStatuses(string name, string state, string lastState, string ready, string restartCount, string image, string imageID, string containerID) {
+			this.name = name;
+			this.state = state;
+			this.lastState = lastState;
+			this.ready = ready;
+			this.restartCount = restartCount;
+			this.image = image;
+			this.imageID = imageID;
+			this.containerID = containerID;
+		}
+		public ContainerStatuses() {  // Allow for New() instantiation
+			this.name = "";
+			this.state = "";
+			this.lastState = "";
+			this.ready = "";
+			this.restartCount = "";
+			this.image = "";
+			this.imageID = "";
+			this.containerID = "";
+		}
+	}
 
 }
