@@ -9,8 +9,8 @@ public class PodInfo : MonoBehaviour {
 	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
 	
 	public List<Items> itemList = new List<Items>();
-	public List<Status> statusList = new List<Status>();
-	public List<Containers> containerList = new List<Containers>();
+	//public List<Status> statusList = new List<Status>();
+	//public List<Containers> containerList = new List<Containers>();
 
 	public void BuildJSON(string encodedString) {
 		JSONObject podsList = new JSONObject(encodedString);
@@ -18,12 +18,12 @@ public class PodInfo : MonoBehaviour {
 		podsList.GetField(
 			"items", delegate(JSONObject itemsList) {
 			foreach (JSONObject thisItem in itemsList.list) {
-				Debug.Log(thisItem);
+				//Debug.Log(thisItem);
 				Metadata metadata = MetadataJSON(thisItem);
 				Spec spec = SpecJSON(thisItem);
 				Status status = StatusJSON(thisItem);
 				// Now assemble the items
-				Items _item = new Items(metadata, spec, status);
+				Items _item = new Items(metadata.name, metadata, spec, status);
 				itemList.Add(_item);
 				}
 			},
@@ -38,14 +38,14 @@ public class PodInfo : MonoBehaviour {
 	public Metadata MetadataJSON(JSONObject metadata) {
 		Metadata _meta = new Metadata ();
 		metadata.GetField ("metadata", delegate(JSONObject metadatas) {
-			//Debug.Log (metadatas ["selfLink"]);
+			List<Labels> label = LabelsJSON(metadatas);
 			_meta = new Metadata (
 				metadatas ["name"].ToString ().Replace("\"", ""),
 				metadatas ["namespace"].ToString ().Replace("\"", ""),
 				metadatas ["selfLink"].ToString ().Replace("\"", ""),
 				metadatas ["resourceVersion"].ToString ().Replace("\"", ""),
 				metadatas ["creationTimestamp"].ToString ().Replace("\"", ""),
-				metadatas ["labels"].ToString ()
+				label
 			);
 		});
 		return _meta;
@@ -136,7 +136,6 @@ public class PodInfo : MonoBehaviour {
 	}
 
 	public List<VolumeMounts> VolumeMountsJSON(JSONObject volumeMounts) {
-		//VolumeMountsList _volumeMountsList = new VolumeMountsList (new VolumeMounts());
 		List<VolumeMounts> volumeMountsList = new List<VolumeMounts>();
 		volumeMounts.GetField ("volumeMounts", delegate(JSONObject _volumeMounts) {
 			foreach(JSONObject theseVolumeMounts in _volumeMounts) {
@@ -191,7 +190,25 @@ public class PodInfo : MonoBehaviour {
 	}
 
 
-	/*void accessData(JSONObject obj){
+	/******/
+	public List<Labels> LabelsJSON(JSONObject metadata) {
+		List<Labels> labelsList = new List<Labels>();
+		metadata.GetField ("labels", delegate(JSONObject labels) {
+			for(int i=0;i<labels.list.Count;i++) {
+				string key = labels.keys[i].ToString();
+				string value = labels.list[i].ToString().Replace("\"", "");;
+				Labels _label = new Labels();
+				_label.key = key;
+				_label.value = value;
+				labelsList.Add(_label);
+			}
+
+		});
+		return labelsList;
+	}
+	/******/
+
+	void accessData(JSONObject obj){
 		switch(obj.type){
 		case JSONObject.Type.OBJECT:
 			for(int i = 0; i < obj.list.Count; i++){
@@ -220,6 +237,6 @@ public class PodInfo : MonoBehaviour {
 			break;
 			
 		}
-	}*/
+	}
 	
 }
