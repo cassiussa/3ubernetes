@@ -8,7 +8,7 @@ public class PodInfo : MonoBehaviour {
 
 	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
 	
-	public List<Items> itemList = new List<Items>();
+	public List<Items> pods = new List<Items>();
 	//public List<Status> statusList = new List<Status>();
 	//public List<Containers> containerList = new List<Containers>();
 
@@ -24,8 +24,8 @@ public class PodInfo : MonoBehaviour {
 				Status status = StatusJSON(thisItem);
 				// Now assemble the items
 				Items _item = new Items(metadata.name, metadata, spec, status);
-				itemList.Add(_item);
-				}
+					pods.Add(_item);
+			}
 			},
 			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
 				Debug.LogWarning("no itemsList(s)");
