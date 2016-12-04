@@ -7,10 +7,16 @@ using Kubernetes;
 public class PodInfo : MonoBehaviour {
 
 	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
+
+	public PodInstantiation podInstantiation;
 	
 	public List<Items> pods = new List<Items>();
 	//public List<Status> statusList = new List<Status>();
 	//public List<Containers> containerList = new List<Containers>();
+
+	void Awake() {
+		podInstantiation = GetComponent<PodInstantiation> () as PodInstantiation;
+	}
 
 	public void BuildJSON(string encodedString) {
 		JSONObject podsList = new JSONObject(encodedString);
@@ -25,11 +31,9 @@ public class PodInfo : MonoBehaviour {
 				// Now assemble the items
 				Items _item = new Items(metadata.name, metadata, spec, status);
 				pods.Add(_item);
+				//podInstantiation.CreatePod (_item);
 			}
-			},
-			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
-				Debug.LogWarning("no itemsList(s)");
-			}
+			}, delegate(string name) {  }
 		);
 	}
 
@@ -164,18 +168,18 @@ public class PodInfo : MonoBehaviour {
 
 				theseVolumes.GetField("name", delegate(JSONObject name) {
 					_volume.name = name.ToString ().Replace("\"", "");
-				}, delegate(string name) { Debug.LogWarning("no name value"); });
+				}, delegate(string name) {  });
 
 				theseVolumes.GetField("secret", delegate(JSONObject secret) {
 					_volume.secret = secret["secretName"].ToString ().Replace("\"", "");
-				}, delegate(string secret) { Debug.LogWarning("no secret value"); });
+				}, delegate(string secret) {  });
 
 				theseVolumes.GetField("hostPath", delegate(JSONObject hostPath) {
 					foreach(JSONObject thisHostPath in hostPath) {
 						_volume.hostPath = thisHostPath.ToString ().Replace("\"", "");
 					}
 
-				}, delegate(string hostPath) { Debug.LogWarning("no hostPath value"); });
+				}, delegate(string hostPath) {  });
 
 				volumesList.Add(_volume);
 			}
