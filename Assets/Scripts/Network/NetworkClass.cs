@@ -12,54 +12,54 @@ public class NetworkClass : MonoBehaviour {
 	public string url = "http://supercass.com/bah.php";
 	string receivedText;
 	string _cachedReceivedText;
-
+	bool doOnce = false;
+	public PodInstantiation podInstantiation;
 	WWW www;
-	WWW cachedWWW;
-	void Start() {
+
+	void Awake() {
+		podInstantiation = GetComponent<PodInstantiation> () as PodInstantiation;
 		podInfo = GetComponent<PodInfo> ();
+	}
+
+	void Start() {
 		www = new WWW(url);
-		//yield return www;
-		//text = www.text;
-		//Renderer renderer = GetComponent<Renderer>();
-		//renderer.material.mainTexture = www.texture;
+		podInfo.pods = new List<Items>();
+		podInfo.BuildJSON (receivedText);  // To PodInfo.cs
 		StartCoroutine(CheckForChange());
 	}
 
 	void Update() {
 		if (www.isDone) {
 			receivedText = www.text;	
-			if (receivedText != _cachedReceivedText) {
-				//podInfo.BuildJSON(receivedText);  // To PodInfo.cs
-				_cachedReceivedText = receivedText;
-				//Debug.LogError (receivedText);
-				Debug.LogError ("URL has been updated");
+
+			// Run it the first time but with the GameObject instantiations
+			if (doOnce == true) {
+				if (receivedText != _cachedReceivedText) {
+					podInfo.pods = new List<Items> ();
+					podInfo.BuildJSON (receivedText);  // To PodInfo.cs
+					foreach (Items items in podInfo.pods) {
+						podResourceVersions.Add (items.metadata.resourceVersion);
+					}
+					_cachedReceivedText = receivedText;
+				}
+			} else {
+				podInfo.pods = new List<Items> ();
+				podInfo.BuildJSON (receivedText);  // To PodInfo.cs
+				foreach (Items items in podInfo.pods) {
+					podInstantiation.CreatePod (items);
+				}
+				doOnce = true;
 			}
 			www = new WWW(url);
 		}
 	}
 
 	IEnumerator CheckForChange() {
-		//podResourceVersions = new List<string>();
-
-		podInfo.pods = new List<Items>();
-		podInfo.BuildJSON(receivedText);  // To PodInfo.cs
-		foreach(Items items in podInfo.pods) {
-			podResourceVersions.Add (items.metadata.resourceVersion);
-		}
+		Debug.LogWarning ("CheckForChange()");
 
 		yield return new WaitForSeconds(1);
 		Debug.Log ("Checking for update now " + Time.time);
-
-		cachedWWW = new WWW(url);
-		yield return cachedWWW; // May want to remove this later
-
-		for (int i = 0; i < podInfo.pods.Count; i++) {
-			if (podResourceVersions [i] != podInfo.pods [i].metadata.resourceVersion) {
-				Debug.LogError ("<resourceVersion> has changed");
-			}
-		}
-
-
+		yield return www; // May want to remove this later
 		StartCoroutine(CheckForChange());
 	}
 }
