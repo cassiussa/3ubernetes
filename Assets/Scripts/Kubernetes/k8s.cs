@@ -219,6 +219,12 @@ namespace Kubernetes {
 	public class VolumesList {
 		public List<Volumes> volumeMounts = new List<Volumes>();
 		public VolumesList(Volumes volumeMounts) {}
+		public static bool operator ==(VolumesList first, VolumesList second) {
+			return (first.volumeMounts.Equals(second.volumeMounts));
+		}
+		public static bool operator !=(VolumesList first, VolumesList second) {
+			return !(first.volumeMounts.Equals(second.volumeMounts));
+		}
 	}
 
 
@@ -350,6 +356,12 @@ namespace Kubernetes {
 	public class VolumeMountsList {
 		public List<VolumeMounts> volumeMounts = new List<VolumeMounts>();
 		public VolumeMountsList(VolumeMounts volumeMounts) { }
+		public static bool operator ==(VolumeMountsList first, VolumeMountsList second) {
+			return (first.volumeMounts.Equals(second.volumeMounts));
+		}
+		public static bool operator !=(VolumeMountsList first, VolumeMountsList second) {
+			return !(first.volumeMounts.Equals(second.volumeMounts));
+		}
 	}
 
 
