@@ -11,6 +11,7 @@ public class NetworkClass : MonoBehaviour {
 	public List<string> podResourceVersions = new List<string>();
 
 	public string url = "http://supercass.com/bah.php";
+	string fullURL = "";
 	string receivedText;
 	string _cachedReceivedText;
 	string cleanedText;
@@ -25,7 +26,8 @@ public class NetworkClass : MonoBehaviour {
 	}
 
 	void Start() {
-		www = new WWW(url);
+		fullURL = url+"/bah.html";
+		www = new WWW(fullURL);
 		podInfo.pods = new List<Items>();
 		podInfo.BuildJSON (receivedText);  // To PodInfo.cs
 		StartCoroutine(CheckForChange());
@@ -36,7 +38,7 @@ public class NetworkClass : MonoBehaviour {
 	void Update() {
 		// Run the API check every 'coroutineWaitInterval' seconds
 		if (Time.time >= startCoroutineTime) {
-			startCoroutineTime = Time.time + coroutineWaitInterval;
+			startCoroutineTime += coroutineWaitInterval;
 			StartCoroutine (CheckForChange ());
 		}
 
@@ -97,13 +99,13 @@ public class NetworkClass : MonoBehaviour {
 
 
 			_cachedReceivedText = receivedText;
-			www = new WWW(url);
+			www = new WWW(fullURL);
 		}
 	}
 
 	IEnumerator CheckForChange() {
 		yield return new WaitForSeconds(2f);
-		Debug.Log ("Checking for update at " + Time.time);
+		//Debug.Log ("Checking for update at " + Time.time);
 		yield return www; // May want to remove this later
 		//StartCoroutine(CheckForChange());
 	}

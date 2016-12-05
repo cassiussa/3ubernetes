@@ -8,10 +8,12 @@ public class PodInstantiation : MonoBehaviour {
 	public void CreatePod (Items item) {
 		pos += 10f;
 		GameObject pod = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		pod.name = item.name;
 		pod.transform.position = new Vector3(pos, 0, 0);
 		PodInfoForThisPod podInfoForThisPod = pod.gameObject.AddComponent<PodInfoForThisPod> ();
 		podInfoForThisPod.ReceiveData (item);
-		pod.name = item.name;
+		PodAPI podAPI = pod.gameObject.AddComponent<PodAPI> ();
+		podAPI.buildPodVariable = pod.gameObject.AddComponent<BuildPodVariable> ();
 	}
 
 }

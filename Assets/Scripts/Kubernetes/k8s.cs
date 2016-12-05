@@ -16,25 +16,33 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class Items {
 		public string name;
+		public UnityEngine.GameObject gameObject;
+		public string baseURL;
 		public Metadata metadata;
 		public Spec spec;
 		public Status status;
 		
 		// Constructors
-		public Items(string name, Metadata metadata, Spec spec, Status status) {
+		public Items(string name, UnityEngine.GameObject gameObject, string baseURL, Metadata metadata, Spec spec, Status status) {
 			this.name = name;
+			this.gameObject = gameObject;
+			this.baseURL = baseURL;
 			this.metadata = metadata;
 			this.spec = spec;
 			this.status = status;
 		}
 		public Items() {  // Allow for New() instantiation
 			this.name = "";
+			this.gameObject = null;
+			this.baseURL = "";
 			this.metadata = new Metadata();
 			this.spec = new Spec();
 			this.status = new Status();
 		}
 		public Items(Items item) {
 			this.name = item.name;
+			this.gameObject = item.gameObject;
+			this.baseURL = item.baseURL;
 			this.metadata = item.metadata;
 			this.spec = item.spec;
 			this.status = item.status;
@@ -42,6 +50,8 @@ namespace Kubernetes {
 		public static bool operator ==(Items first, Items second) {
 			return (
 				first.name.Equals(second.name) &&
+				first.gameObject.Equals(second.gameObject) &&
+				first.baseURL.Equals(second.baseURL) &&
 				first.metadata.Equals(second.metadata) &&
 				first.spec.Equals(second.spec) &&
 				first.status.Equals(second.status)
@@ -50,6 +60,8 @@ namespace Kubernetes {
 		public static bool operator !=(Items first, Items second) {
 			return !(
 				first.name.Equals(second.name) &&
+				first.gameObject.Equals(second.gameObject) &&
+				first.baseURL.Equals(second.baseURL) &&
 				first.metadata.Equals(second.metadata) &&
 				first.spec.Equals(second.spec) &&
 				first.status.Equals(second.status)

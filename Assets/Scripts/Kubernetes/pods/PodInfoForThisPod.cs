@@ -11,6 +11,7 @@ public class PodInfoForThisPod : MonoBehaviour {
 	public void ReceiveData (Items passedItem) {
 		item = passedItem;
 		cachedResourceVersion = item.metadata.resourceVersion;
+		item.gameObject = this.gameObject;
 	}
 
 	void Update() {
