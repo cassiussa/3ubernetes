@@ -10,26 +10,25 @@ public class BuildPodVariable : MonoBehaviour {
 	public Metadata metadata = new Metadata();
 	public Spec spec = new Spec();
 	public Status status = new Status();
-	public Metadata _meta = new Metadata ();
 
 	public void BeginJSON (string apiText) {
-		_meta = MetadataJSON (new JSONObject (apiText));
+		metadata = MetadataJSON (new JSONObject (apiText));
+		spec = SpecJSON(new JSONObject(apiText));
+		status = StatusJSON(new JSONObject(apiText));
 	}
 
 	public Metadata MetadataJSON(JSONObject _metadata) {
-		Debug.Log (_metadata);
 		Metadata _meta = new Metadata ();
 		_metadata.GetField ("metadata", delegate(JSONObject metadata) {
-			Debug.Log(metadata);
 			List<Labels> label = LabelsJSON(metadata);
-			/*_meta = new Metadata (
+			_meta = new Metadata (
 				metadata ["name"].ToString ().Replace("\"", ""),
 				metadata ["namespace"].ToString ().Replace("\"", ""),
 				metadata ["selfLink"].ToString ().Replace("\"", ""),
 				metadata ["resourceVersion"].ToString ().Replace("\"", ""),
 				metadata ["creationTimestamp"].ToString ().Replace("\"", ""),
 				label
-			);*/
+			);
 		}, delegate(string name) {  }
 		);
 		return _meta;

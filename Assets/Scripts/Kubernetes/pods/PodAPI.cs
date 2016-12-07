@@ -39,7 +39,7 @@ public class PodAPI : MonoBehaviour {
 			apiText = www.text;
 			if (apiText != cachedApiText) {
 				buildPodVariable.BeginJSON (apiText);
-				Debug.LogError ("Pod has changed.", gameObject);
+				//Debug.LogError ("Pod has changed.", gameObject);
 			} else {
 
 			}
