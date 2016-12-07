@@ -5,7 +5,7 @@ using Kubernetes;
 
 public class PodAPI : MonoBehaviour {
 	public PodInfoForThisPod podInfoForThisPod;
-	public BuildPodVariable buildPodVariable;
+	public KeepPodCurrent keepPodCurrent;
 	public Items item;
 	public string baseURL;
 	string fullURL = "";
@@ -19,7 +19,7 @@ public class PodAPI : MonoBehaviour {
 
 	void Awake () {
 		podInfoForThisPod = GetComponent<PodInfoForThisPod> ();
-		buildPodVariable = GetComponent<BuildPodVariable> ();
+		keepPodCurrent = GetComponent<KeepPodCurrent> ();
 		item = podInfoForThisPod.item;
 		baseURL = item.baseURL;
 		fullURL = baseURL + item.metadata.selfLink;
@@ -38,8 +38,7 @@ public class PodAPI : MonoBehaviour {
 			cachedApiText = apiText;
 			apiText = www.text;
 			if (apiText != cachedApiText) {
-				buildPodVariable.BeginJSON (apiText);
-				//Debug.LogError ("Pod has changed.", gameObject);
+				keepPodCurrent.BeginJSON (apiText);
 			} else {
 
 			}
@@ -50,7 +49,9 @@ public class PodAPI : MonoBehaviour {
 
 	IEnumerator CheckForChange() {
 		www = new WWW(fullURL);
-		Debug.Log ("Checking for update at " + Time.time);
+		//Debug.Log ("Checking for update at " + Time.time);
 		yield return www; // May want to remove this later
 	}
+
+
 }
