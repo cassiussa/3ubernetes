@@ -39,59 +39,56 @@ public class PodListAPI : MonoBehaviour {
 		//podInfo.BuildJSON (receivedText);  // To PodInfo.cs
 		StartCoroutine(CheckForChange());
 
-		Conditions cond = new Conditions ("type", "status", "lprobe", "ltt");
-
+		/*
+		 * This section was used to verify that the 
+		 * conditionals on Items was traversing all the way
+		 * down the object successfully.
 		Labels lab1 = new Labels ("key", "value");
-		List<Labels> llab1 = new List <Labels>();
-		llab1.Add (lab1);
-		Metadata mdata = new Metadata ("name", "namespace", "selfLink", "resource", "time", llab1);
-		List<Volumes> lvol1 = new List<Volumes> ();
-		lvol1.Add (new Volumes ("name","secret","hostpath"));
-		List<VolumeMounts> lvolm1 = new List<VolumeMounts> ();
-		lvolm1.Add (new VolumeMounts ());
-		Containers cont1 = new Containers ("name", "image", "resource", lvolm1);
-		Spec spc1 = new Spec (lvol1, cont1, "nodename");
-		ContainerStatuses contStatus1 = new ContainerStatuses ("name", "state", "lastState", "ready", "count", "image", "imageid", "contid");
-		Conditions cond1 = new Conditions ("type", "status", "lprove", "ltt");
-		Status sta1 = new Status ("phase", cond1, "hostip", "podip", "time", contStatus1);
-
 		Labels lab2 = new Labels ("key", "value");
+		List<Labels> llab1 = new List <Labels>();
 		List<Labels> llab2 = new List <Labels>();
+		llab1.Add (lab1);
 		llab2.Add (lab2);
+		Metadata mdata1 = new Metadata ("name", "namespace", "selfLink", "resource", "time", llab1);
 		Metadata mdata2 = new Metadata ("name", "namespace", "selfLink", "resource", "time", llab2);
+		List<Volumes> lvol1 = new List<Volumes> ();
 		List<Volumes> lvol2 = new List<Volumes> ();
+		lvol1.Add (new Volumes ("name","secret","hostpath"));
 		lvol2.Add (new Volumes ("name","secret","hostpath"));
+		List<VolumeMounts> lvolm1 = new List<VolumeMounts> ();
 		List<VolumeMounts> lvolm2 = new List<VolumeMounts> ();
-		lvolm2.Add (new VolumeMounts ());
+		lvolm1.Add (new VolumeMounts ("name",true,"mountpath"));
+		lvolm2.Add (new VolumeMounts ("name",true,"mountpath"));
+		Containers cont1 = new Containers ("name", "image", "resource", lvolm1);
 		Containers cont2 = new Containers ("name", "image", "resource", lvolm2);
-		Spec spc2 = new Spec (lvol2, cont1, "nodename");
+		Spec spc1 = new Spec (lvol1, cont1, "nodename");
+		Spec spc2 = new Spec (lvol2, cont2, "nodename");
+		ContainerStatuses contStatus1 = new ContainerStatuses ("name", "state", "lastState", "ready", "count", "image", "imageid", "contid");
 		ContainerStatuses contStatus2 = new ContainerStatuses ("name", "state", "lastState", "ready", "count", "image", "imageid", "contid");
+		Conditions cond1 = new Conditions ("type", "status", "lprove", "ltt");
 		Conditions cond2 = new Conditions ("type", "status", "lprove", "ltt");
+		Status sta1 = new Status ("phase", cond1, "hostip", "podip", "time", contStatus1);
 		Status sta2 = new Status ("phase", cond2, "hostip", "podip", "time", contStatus2);
-		// spc1 and spc2
-		Items label1 = new Items ("name", gameObject, "baseurl", mdata, spc1, sta1);
-		Items label2 = new Items ("name", gameObject, "baseurl", mdata, spc2, sta2);
+		Items label1 = new Items ("name", gameObject, "baseurl", mdata1, spc1, sta1);
+		Items label2 = new Items ("name", gameObject, "baseurl", mdata2, spc2, sta2);
 
-
-
-		if (label1 == label2) {
+		if(label1 == label2) {
 			Debug.Log ("equal");
 		} else {
 			Debug.Log ("not equal");
 		}
-	}
-	// Check to see if the Lists have same values.  Needed so that I can
-	// Get the == operator overriding properly for Items type conditionals
-	bool CheckMatch(List<Labels> l1, List<Labels> l2) {
-		if (l1.Count != l2.Count)
-			return false;
-		for (int i = 0; i < l1.Count; i++) {
-			if (l1[i] != l2[i])
-				return false;
-		}
-		return true;
-	}
+		*/
 
+
+
+
+
+		/*if (label1 == label2) {
+			Debug.Log ("equal");
+		} else {
+			Debug.Log ("not equal");
+		}*/
+	}
 
 
 	float startCoroutineTime = 0f;
@@ -99,15 +96,15 @@ public class PodListAPI : MonoBehaviour {
 
 	void Update() {
 
-
-		if (thisWwwCall.isDone) {  // The API check is complete
+		// The API check is complete
+		if (thisWwwCall.isDone) {
 
 			// Create new text entries
 			receivedText = thisWwwCall.text;
 			cleanedText = PurgeOuterObject (thisWwwCall.text);
 
-
-			if (doneOnce == false) {  // Hasn't been run before
+			// Hasn't been run before
+			if (doneOnce == false) {
 				podArray.pods = new List<Items> ();
 				podArray.BuildJSON (receivedText, podArray.pods);  // To PodInfo.cs
 				foreach (Items items in podArray.pods) {
@@ -115,26 +112,24 @@ public class PodListAPI : MonoBehaviour {
 				}
 
 				doneOnce = true;
-
-			} else {  // Has been run before
+				// Has been run before
+			} else {
+				//  We have an update on something
 				if (cleanedText != _cachedCleanedText) {
-					//PodArray _cachedPodArray = podArray;
-					//podArray.pods = podArray.changedPods;
 					podArray.changedPods = new List<Items> ();
 					podArray.BuildJSON (receivedText, podArray.changedPods);  // To PodInfo.cs
 					// We should compare the new to the old, individually
-					foreach (Items outterItem in podArray.changedPods) {
-						foreach (Items innerItem in podArray.pods) {
-							if (innerItem.name == outterItem.name) {
+					foreach (Items changedPods in podArray.changedPods) {
+						foreach (Items currentPods in podArray.pods) {
+							if (changedPods.name == currentPods.name) {
+								changedPods.gameObject = currentPods.gameObject;
 								// Now check to see if the Items are equal
-								if (innerItem != outterItem) {
-									Debug.Log (innerItem.name + " is not equal");
+								if (currentPods != changedPods) {
+									Debug.Log (changedPods.name + " is not equal" + currentPods.name);
+									UpdateThisPod updateThisPod = GameObject.Find (changedPods.name).GetComponent<UpdateThisPod> ();
+									updateThisPod.item = changedPods;
+									updateThisPod.Copy ();
 								}
-								/*
-								 * If not, do the below
-								 * GameObject.Find (outterItem.name).GetComponent<UpdateThisPod> ().item = outterItem;
-								 */
-
 							}
 						}
 					}

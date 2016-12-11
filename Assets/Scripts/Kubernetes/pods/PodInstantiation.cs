@@ -20,6 +20,7 @@ public class PodInstantiation : MonoBehaviour {
 		//thisPod.keepPodCurrent = pod.gameObject.AddComponent<KeepPodCurrent> ();
 		//thisPod.keepPodCurrent.podMaterial = mat;
 		UpdateThisPod updateThisPod = pod.gameObject.AddComponent<UpdateThisPod> ();
+		updateThisPod.podMaterial = mat;
 		updateThisPod.ReceiveData (item);  // Set it to be the same initially, so we have data
 	}
 

@@ -103,8 +103,10 @@ namespace Kubernetes {
 				first.selfLink == second.selfLink &&
 				first.resourceVersion == second.resourceVersion &&
 				first.creationTimestamp == second.creationTimestamp &&
-				first.labels == second.labels
+				CheckMatch(first.labels, second.labels)
 			);
+
+
 		}
 		public static bool operator !=(Metadata first, Metadata second) {
 			return !(
@@ -113,8 +115,17 @@ namespace Kubernetes {
 				first.selfLink == second.selfLink &&
 				first.resourceVersion == second.resourceVersion &&
 				first.creationTimestamp == second.creationTimestamp &&
-				first.labels == second.labels
+				CheckMatch(first.labels, second.labels)
 			);
+		}
+		static bool CheckMatch(List<Labels> l1, List<Labels> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 
@@ -139,17 +150,27 @@ namespace Kubernetes {
 
 		public static bool operator ==(Spec first, Spec second) {
 			return (
-				first.volumes == second.volumes &&
+				CheckMatch(first.volumes, second.volumes) &&
 				first.containers == second.containers &&
 				first.nodeName == second.nodeName
 			);
 		}
 		public static bool operator !=(Spec first, Spec second) {
 			return !(
-				first.volumes == second.volumes &&
+				CheckMatch(first.volumes, second.volumes) &&
 				first.containers == second.containers &&
 				first.nodeName == second.nodeName
 			);
+		}
+
+		static bool CheckMatch(List<Volumes> l1, List<Volumes> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 
@@ -180,7 +201,7 @@ namespace Kubernetes {
 				first.name == second.name &&
 				first.image == second.image &&
 				first.resources == second.resources &&
-				first.volumeMounts == second.volumeMounts
+				CheckMatch(first.volumeMounts, second.volumeMounts)
 			);
 		}
 		public static bool operator !=(Containers first, Containers second) {
@@ -188,8 +209,18 @@ namespace Kubernetes {
 				first.name == second.name &&
 				first.image == second.image &&
 				first.resources == second.resources &&
-				first.volumeMounts == second.volumeMounts
+				CheckMatch(first.volumeMounts, second.volumeMounts)
 			);
+		}
+
+		static bool CheckMatch(List<VolumeMounts> l1, List<VolumeMounts> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 
@@ -235,10 +266,19 @@ namespace Kubernetes {
 		}
 		//public VolumesList(Volumes volumeMounts) {}
 		public static bool operator ==(VolumesList first, VolumesList second) {
-			return (first.volumeMounts == second.volumeMounts);
+			return (CheckMatch(first.volumeMounts, second.volumeMounts));
 		}
 		public static bool operator !=(VolumesList first, VolumesList second) {
-			return !(first.volumeMounts == second.volumeMounts);
+			return !(CheckMatch(first.volumeMounts, second.volumeMounts));
+		}
+		static bool CheckMatch(List<Volumes> l1, List<Volumes> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 
@@ -375,10 +415,19 @@ namespace Kubernetes {
 		}
 		//public VolumeMountsList(VolumeMounts volMounts) { }
 		public static bool operator ==(VolumeMountsList first, VolumeMountsList second) {
-			return (first.volumeMounts == second.volumeMounts);
+			return (CheckMatch(first.volumeMounts, second.volumeMounts));
 		}
 		public static bool operator !=(VolumeMountsList first, VolumeMountsList second) {
-			return !(first.volumeMounts == second.volumeMounts);
+			return !(CheckMatch(first.volumeMounts, second.volumeMounts));
+		}
+		static bool CheckMatch(List<VolumeMounts> l1, List<VolumeMounts> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 

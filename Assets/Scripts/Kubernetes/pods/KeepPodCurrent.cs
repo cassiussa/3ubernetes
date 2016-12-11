@@ -204,7 +204,7 @@ public class KeepPodCurrent : MonoBehaviour {
 	float duration = 0.25f; // duration in seconds
 	float t = 0; // lerp control variable
 
-	IEnumerator ChangePodLook() {
+	public IEnumerator ChangePodLook() {
 		if (status.phase == "Starting") {
 			startColor = podMaterial.color;
 			endColor = new Color (190f/255f, 237f/255f, 249f/255f);
