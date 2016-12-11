@@ -5,7 +5,7 @@ using Kubernetes;
 public class PodInstantiation : MonoBehaviour {
 
 	float pos = 0f;
-	public void CreatePod (Items item) {
+	public void CreatePod (Items item, Hashtable headers) {
 		pos += 10f;
 		GameObject pod = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		Material mat = new Material (Shader.Find("Diffuse"));
@@ -13,11 +13,14 @@ public class PodInstantiation : MonoBehaviour {
 		mat.color = new Color (1, 1, 1);
 		pod.name = item.name;
 		pod.transform.position = new Vector3(pos, 0, 0);
-		PodInfoForThisPod podInfoForThisPod = pod.gameObject.AddComponent<PodInfoForThisPod> ();
-		podInfoForThisPod.ReceiveData (item);
-		PodAPI podAPI = pod.gameObject.AddComponent<PodAPI> ();
-		podAPI.keepPodCurrent = pod.gameObject.AddComponent<KeepPodCurrent> ();
-		podAPI.keepPodCurrent.podMaterial = mat;
+
+		ThisPod thisPod = pod.gameObject.AddComponent<ThisPod> ();
+		thisPod.headers = headers;
+		thisPod.ReceiveData (item);
+		//thisPod.keepPodCurrent = pod.gameObject.AddComponent<KeepPodCurrent> ();
+		//thisPod.keepPodCurrent.podMaterial = mat;
+		UpdateThisPod updateThisPod = pod.gameObject.AddComponent<UpdateThisPod> ();
+		updateThisPod.ReceiveData (item);  // Set it to be the same initially, so we have data
 	}
 
 }

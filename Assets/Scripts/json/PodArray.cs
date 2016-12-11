@@ -4,12 +4,13 @@ using System.Collections.Generic; // for List types
 using System;
 using Kubernetes;
 
-public class PodInfo : MonoBehaviour {
+public class PodArray : MonoBehaviour {
 
 	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
 	public List<Items> pods = new List<Items>();
+	public List<Items> changedPods = new List<Items>();
 
-	public void BuildJSON(string encodedString) {
+	public void BuildJSON(string encodedString, List<Items> pods) {
 		JSONObject podsList = new JSONObject(encodedString);
 
 		podsList.GetField(
@@ -18,7 +19,7 @@ public class PodInfo : MonoBehaviour {
 				Metadata metadata = MetadataJSON(thisItem);
 				Spec spec = SpecJSON(thisItem);
 				Status status = StatusJSON(thisItem);
-				string baseURL = GetComponent<NetworkClass>().url;
+				string baseURL = GetComponent<PodListAPI>().url;
 				// Now assemble the items
 				Items _item = new Items(metadata.name, null, baseURL, metadata, spec, status);
 				pods.Add(_item);

@@ -49,22 +49,22 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Items first, Items second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.gameObject.Equals(second.gameObject) &&
-				first.baseURL.Equals(second.baseURL) &&
-				first.metadata.Equals(second.metadata) &&
-				first.spec.Equals(second.spec) &&
-				first.status.Equals(second.status)
+				first.name == second.name &&
+				first.gameObject == second.gameObject &&
+				first.baseURL == second.baseURL &&
+				first.metadata == second.metadata &&
+				first.spec == second.spec &&
+				first.status == second.status
 			);
 		}
 		public static bool operator !=(Items first, Items second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.gameObject.Equals(second.gameObject) &&
-				first.baseURL.Equals(second.baseURL) &&
-				first.metadata.Equals(second.metadata) &&
-				first.spec.Equals(second.spec) &&
-				first.status.Equals(second.status)
+				first.name == second.name &&
+				first.gameObject == second.gameObject &&
+				first.baseURL == second.baseURL &&
+				first.metadata == second.metadata &&
+				first.spec == second.spec &&
+				first.status == second.status
 			);
 		}
 	}
@@ -98,22 +98,22 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Metadata first, Metadata second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.Namespace.Equals(second.Namespace) &&
-				first.selfLink.Equals(second.selfLink) &&
-				first.resourceVersion.Equals(second.resourceVersion) &&
-				first.creationTimestamp.Equals(second.creationTimestamp) &&
-				first.labels.Equals(second.labels)
+				first.name == second.name &&
+				first.Namespace == second.Namespace &&
+				first.selfLink == second.selfLink &&
+				first.resourceVersion == second.resourceVersion &&
+				first.creationTimestamp == second.creationTimestamp &&
+				first.labels == second.labels
 			);
 		}
 		public static bool operator !=(Metadata first, Metadata second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.Namespace.Equals(second.Namespace) &&
-				first.selfLink.Equals(second.selfLink) &&
-				first.resourceVersion.Equals(second.resourceVersion) &&
-				first.creationTimestamp.Equals(second.creationTimestamp) &&
-				first.labels.Equals(second.labels)
+				first.name == second.name &&
+				first.Namespace == second.Namespace &&
+				first.selfLink == second.selfLink &&
+				first.resourceVersion == second.resourceVersion &&
+				first.creationTimestamp == second.creationTimestamp &&
+				first.labels == second.labels
 			);
 		}
 	}
@@ -139,16 +139,16 @@ namespace Kubernetes {
 
 		public static bool operator ==(Spec first, Spec second) {
 			return (
-				first.volumes.Equals(second.volumes) &&
-				first.containers.Equals(second.containers) &&
-				first.nodeName.Equals(second.nodeName)
+				first.volumes == second.volumes &&
+				first.containers == second.containers &&
+				first.nodeName == second.nodeName
 			);
 		}
 		public static bool operator !=(Spec first, Spec second) {
 			return !(
-				first.volumes.Equals(second.volumes) &&
-				first.containers.Equals(second.containers) &&
-				first.nodeName.Equals(second.nodeName)
+				first.volumes == second.volumes &&
+				first.containers == second.containers &&
+				first.nodeName == second.nodeName
 			);
 		}
 	}
@@ -177,18 +177,18 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Containers first, Containers second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.image.Equals(second.image) &&
-				first.resources.Equals(second.resources) &&
-				first.volumeMounts.Equals(second.volumeMounts)
+				first.name == second.name &&
+				first.image == second.image &&
+				first.resources == second.resources &&
+				first.volumeMounts == second.volumeMounts
 			);
 		}
 		public static bool operator !=(Containers first, Containers second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.image.Equals(second.image) &&
-				first.resources.Equals(second.resources) &&
-				first.volumeMounts.Equals(second.volumeMounts)
+				first.name == second.name &&
+				first.image == second.image &&
+				first.resources == second.resources &&
+				first.volumeMounts == second.volumeMounts
 			);
 		}
 	}
@@ -213,16 +213,16 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Volumes first, Volumes second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.secret.Equals(second.secret) &&
-				first.hostPath.Equals(second.hostPath)
+				first.name == second.name &&
+				first.secret == second.secret &&
+				first.hostPath == second.hostPath
 			);
 		}
 		public static bool operator !=(Volumes first, Volumes second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.secret.Equals(second.secret) &&
-				first.hostPath.Equals(second.hostPath)
+				first.name == second.name &&
+				first.secret == second.secret &&
+				first.hostPath == second.hostPath
 			);
 		}
 	}
@@ -230,12 +230,15 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class VolumesList {
 		public List<Volumes> volumeMounts = new List<Volumes>();
-		public VolumesList(Volumes volumeMounts) {}
+		public VolumesList(List<Volumes> volumeMounts) {
+			this.volumeMounts = volumeMounts;
+		}
+		//public VolumesList(Volumes volumeMounts) {}
 		public static bool operator ==(VolumesList first, VolumesList second) {
-			return (first.volumeMounts.Equals(second.volumeMounts));
+			return (first.volumeMounts == second.volumeMounts);
 		}
 		public static bool operator !=(VolumesList first, VolumesList second) {
-			return !(first.volumeMounts.Equals(second.volumeMounts));
+			return !(first.volumeMounts == second.volumeMounts);
 		}
 	}
 
@@ -269,22 +272,22 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Status first, Status second) {
 			return (
-				first.phase.Equals(second.phase) &&
-				first.conditions.Equals(second.conditions) &&
-				first.hostIP.Equals(second.hostIP) &&
-				first.podIP.Equals(second.podIP) &&
-				first.startTime.Equals(second.startTime) &&
-				first.containerStatuses.Equals(second.containerStatuses)
+				first.phase == second.phase &&
+				first.conditions == second.conditions &&
+				first.hostIP == second.hostIP &&
+				first.podIP == second.podIP &&
+				first.startTime == second.startTime &&
+				first.containerStatuses == second.containerStatuses
 			);
 		}
 		public static bool operator !=(Status first, Status second) {
 			return !(
-				first.phase.Equals(second.phase) &&
-				first.conditions.Equals(second.conditions) &&
-				first.hostIP.Equals(second.hostIP) &&
-				first.podIP.Equals(second.podIP) &&
-				first.startTime.Equals(second.startTime) &&
-				first.containerStatuses.Equals(second.containerStatuses)
+				first.phase == second.phase &&
+				first.conditions == second.conditions &&
+				first.hostIP == second.hostIP &&
+				first.podIP == second.podIP &&
+				first.startTime == second.startTime &&
+				first.containerStatuses == second.containerStatuses
 			);
 		}
 	}
@@ -312,18 +315,18 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(Conditions first, Conditions second) {
 			return (
-				first.type.Equals(second.type) &&
-				first.status.Equals(second.status) &&
-				first.lastProbeTime.Equals(second.lastProbeTime) &&
-				first.lastTransitionTime.Equals(second.lastTransitionTime)
+				first.type == second.type &&
+				first.status == second.status &&
+				first.lastProbeTime == second.lastProbeTime &&
+				first.lastTransitionTime == second.lastTransitionTime
 			);
 		}
 		public static bool operator !=(Conditions first, Conditions second) {
 			return !(
-				first.type.Equals(second.type) &&
-				first.status.Equals(second.status) &&
-				first.lastProbeTime.Equals(second.lastProbeTime) &&
-				first.lastTransitionTime.Equals(second.lastTransitionTime)
+				first.type == second.type &&
+				first.status == second.status &&
+				first.lastProbeTime == second.lastProbeTime &&
+				first.lastTransitionTime == second.lastTransitionTime
 			);
 		}
 	}
@@ -349,16 +352,16 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(VolumeMounts first, VolumeMounts second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.readOnly.Equals(second.readOnly) &&
-				first.mountPath.Equals(second.mountPath)
+				first.name == second.name &&
+				first.readOnly == second.readOnly &&
+				first.mountPath == second.mountPath
 			);
 		}
 		public static bool operator !=(VolumeMounts first, VolumeMounts second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.readOnly.Equals(second.readOnly) &&
-				first.mountPath.Equals(second.mountPath)
+				first.name == second.name &&
+				first.readOnly == second.readOnly &&
+				first.mountPath == second.mountPath
 			);
 		}
 	}
@@ -367,12 +370,15 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class VolumeMountsList {
 		public List<VolumeMounts> volumeMounts = new List<VolumeMounts>();
-		public VolumeMountsList(VolumeMounts volumeMounts) { }
+		public VolumeMountsList(List<VolumeMounts> volMounts) {
+			this.volumeMounts = volMounts;
+		}
+		//public VolumeMountsList(VolumeMounts volMounts) { }
 		public static bool operator ==(VolumeMountsList first, VolumeMountsList second) {
-			return (first.volumeMounts.Equals(second.volumeMounts));
+			return (first.volumeMounts == second.volumeMounts);
 		}
 		public static bool operator !=(VolumeMountsList first, VolumeMountsList second) {
-			return !(first.volumeMounts.Equals(second.volumeMounts));
+			return !(first.volumeMounts == second.volumeMounts);
 		}
 	}
 
@@ -413,26 +419,26 @@ namespace Kubernetes {
 		}
 		public static bool operator ==(ContainerStatuses first, ContainerStatuses second) {
 			return (
-				first.name.Equals(second.name) &&
-				first.state.Equals(second.state) &&
-				first.lastState.Equals(second.lastState) &&
-				first.ready.Equals(second.ready) &&
-				first.restartCount.Equals(second.restartCount) &&
-				first.image.Equals(second.image) &&
-				first.imageID.Equals(second.imageID) &&
-				first.containerID.Equals(second.containerID)
+				first.name == second.name &&
+				first.state == second.state &&
+				first.lastState == second.lastState &&
+				first.ready == second.ready &&
+				first.restartCount == second.restartCount &&
+				first.image == second.image &&
+				first.imageID == second.imageID &&
+				first.containerID == second.containerID
 			);
 		}
 		public static bool operator !=(ContainerStatuses first, ContainerStatuses second) {
 			return !(
-				first.name.Equals(second.name) &&
-				first.state.Equals(second.state) &&
-				first.lastState.Equals(second.lastState) &&
-				first.ready.Equals(second.ready) &&
-				first.restartCount.Equals(second.restartCount) &&
-				first.image.Equals(second.image) &&
-				first.imageID.Equals(second.imageID) &&
-				first.containerID.Equals(second.containerID)
+				first.name == second.name &&
+				first.state == second.state &&
+				first.lastState == second.lastState &&
+				first.ready == second.ready &&
+				first.restartCount == second.restartCount &&
+				first.image == second.image &&
+				first.imageID == second.imageID &&
+				first.containerID == second.containerID
 			);
 		}
 	}
@@ -440,24 +446,27 @@ namespace Kubernetes {
 
 	// PodList -> Items -> Spec -> Containers -> volumeMounts
 	[System.Serializable] // Show it in the Inspector
-	public class Labels {
+	public class Labels{
 		public string key;
 		public string value;
 
 		// Constructors
-		public Labels(string key, string value) { }
-		public Labels() { }
-		public static bool operator ==(Labels first, Labels second) {
-			return (
-				first.key.Equals(second.key) &&
-				first.value.Equals(second.value)
-			);
+		public Labels(string key, string value) {
+			this.key = key;
+			this.value = value;
 		}
-		public static bool operator !=(Labels first, Labels second) {
-			return !(
-				first.key.Equals(second.key) &&
-				first.value.Equals(second.value)
-			);
+		public Labels(Labels labels) {
+			this.key = labels.key;
+			this.value = labels.value;
+		}
+
+		public Labels() { }
+
+		public static bool operator == (Labels first, Labels second) {
+			return (first.key == second.key && first.value == second.value);
+		}
+		public static bool operator != (Labels first, Labels second) {
+			return !(first.key == second.key && first.value == second.value);
 		}
 	}
 
