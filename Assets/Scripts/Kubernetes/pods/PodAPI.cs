@@ -13,18 +13,22 @@ public class PodAPI : MonoBehaviour {
 	public string cachedApiText = "";
 
 	public WWW www;
+	public WWWForm form;
+	public Hashtable headers;
 
 	float startCoroutineTime = 0f;
 	float coroutineWaitInterval = 1f;
 
 	void Awake () {
+		headers = new Hashtable();
+		headers.Add("Authorization", "Bearer <token>");
 		podInfoForThisPod = GetComponent<PodInfoForThisPod> ();
 		keepPodCurrent = GetComponent<KeepPodCurrent> ();
 		item = podInfoForThisPod.item;
 		baseURL = item.baseURL;
 		fullURL = baseURL + item.metadata.selfLink;
 		Debug.Log (fullURL);
-		www = new WWW(fullURL);
+		www = new WWW(fullURL, null, headers);
 	}
 
 	void Update() {
@@ -48,7 +52,7 @@ public class PodAPI : MonoBehaviour {
 
 
 	IEnumerator CheckForChange() {
-		www = new WWW(fullURL);
+		www = new WWW(fullURL, null, headers);
 		//Debug.Log ("Checking for update at " + Time.time);
 		yield return www; // May want to remove this later
 	}

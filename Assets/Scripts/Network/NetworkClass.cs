@@ -18,7 +18,11 @@ public class NetworkClass : MonoBehaviour {
 	string _cachedCleanedText;
 	bool doneOnce = false;
 	public PodInstantiation podInstantiation;
-	WWW www;
+	WWW thisWwwCall;
+	WWWForm form;
+	Hashtable headers;
+	//headers.Add("Header_key", "Header_val");
+	//www = new WWW("http://localhost/getpostheaders", null, headers);
 
 	void Awake() {
 		podInstantiation = GetComponent<PodInstantiation> () as PodInstantiation;
@@ -26,8 +30,13 @@ public class NetworkClass : MonoBehaviour {
 	}
 
 	void Start() {
-		fullURL = url+"/bah.html";
-		www = new WWW(fullURL);
+		//form = new WWWForm();
+		headers = new Hashtable();
+		headers.Add("Authorization", "Bearer <toke>");
+
+		//fullURL = url+"/api/v1/namespaces/ocelot-app/pods";
+		fullURL = url+"/api/v1/namespaces/ocelot-app/pods";
+		thisWwwCall = new WWW(fullURL, null, headers);
 		podInfo.pods = new List<Items>();
 		podInfo.BuildJSON (receivedText);  // To PodInfo.cs
 		StartCoroutine(CheckForChange());
@@ -36,16 +45,19 @@ public class NetworkClass : MonoBehaviour {
 	float coroutineWaitInterval = 1f;
 
 	void Update() {
-		// Run the API check every 'coroutineWaitInterval' seconds
-		if (Time.time >= startCoroutineTime) {
-			startCoroutineTime += coroutineWaitInterval;
-			StartCoroutine (CheckForChange ());
-		}
+		
 
-		if (www.isDone) {
+		if (thisWwwCall.isDone) {
+			// Run the API check every 'coroutineWaitInterval' seconds
+			if (Time.time >= startCoroutineTime) {
+				startCoroutineTime += coroutineWaitInterval;
+				StartCoroutine (CheckForChange ());
+			}
+
+			Debug.Log ("is done");
 			_cachedReceivedText = receivedText;
 			_cachedCleanedText = receivedText;
-			receivedText = www.text;
+			receivedText = thisWwwCall.text;
 			cleanedText = receivedText;
 
 			if (cleanedText != null && _cachedCleanedText != null) {
@@ -99,14 +111,14 @@ public class NetworkClass : MonoBehaviour {
 
 
 			_cachedReceivedText = receivedText;
-			www = new WWW(fullURL);
+			thisWwwCall = new WWW(fullURL, null, headers);
 		}
 	}
 
 	IEnumerator CheckForChange() {
 		yield return new WaitForSeconds(2f);
 		//Debug.Log ("Checking for update at " + Time.time);
-		yield return www; // May want to remove this later
+		yield return thisWwwCall; // May want to remove this later
 		//StartCoroutine(CheckForChange());
 	}
 }

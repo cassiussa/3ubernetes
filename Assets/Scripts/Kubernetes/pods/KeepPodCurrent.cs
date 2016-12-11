@@ -1,47 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic; // for List types
-using System;
 using Kubernetes;
 
-public class PodInfo : MonoBehaviour {
+public class KeepPodCurrent : MonoBehaviour {
 
-	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
-	public List<Items> pods = new List<Items>();
+	public string name = "";
+	public string baseURL = "";
+	public Metadata metadata = new Metadata();
+	public Spec spec = new Spec();
+	public Status status = new Status();
 
-	public void BuildJSON(string encodedString) {
-		JSONObject podsList = new JSONObject(encodedString);
+	public Material podMaterial;
 
-		podsList.GetField(
-			"items", delegate(JSONObject itemsList) {
-			foreach (JSONObject thisItem in itemsList.list) {
-				Metadata metadata = MetadataJSON(thisItem);
-				Spec spec = SpecJSON(thisItem);
-				Status status = StatusJSON(thisItem);
-				string baseURL = GetComponent<NetworkClass>().url;
-				// Now assemble the items
-				Items _item = new Items(metadata.name, null, baseURL, metadata, spec, status);
-				pods.Add(_item);
-			}
-			}, delegate(string name) {  }
-		);
+	public void BeginJSON (string apiText) {
+		metadata = MetadataJSON (new JSONObject (apiText));
+		spec = SpecJSON(new JSONObject(apiText));
+		status = StatusJSON(new JSONObject(apiText));
+		StartCoroutine (ChangePodLook());
 	}
 
-
-
-	public Metadata MetadataJSON(JSONObject metadata) {
+	public Metadata MetadataJSON(JSONObject _metadata) {
 		Metadata _meta = new Metadata ();
-		metadata.GetField ("metadata", delegate(JSONObject metadatas) {
-			List<Labels> label = LabelsJSON(metadatas);
+		_metadata.GetField ("metadata", delegate(JSONObject metadata) {
+			List<Labels> label = LabelsJSON(metadata);
 			_meta = new Metadata (
-				metadatas ["name"].ToString ().Replace("\"", ""),
-				metadatas ["namespace"].ToString ().Replace("\"", ""),
-				metadatas ["selfLink"].ToString ().Replace("\"", ""),
-				metadatas ["resourceVersion"].ToString ().Replace("\"", ""),
-				metadatas ["creationTimestamp"].ToString ().Replace("\"", ""),
+				metadata ["name"].ToString ().Replace("\"", ""),
+				metadata ["namespace"].ToString ().Replace("\"", ""),
+				metadata ["selfLink"].ToString ().Replace("\"", ""),
+				metadata ["resourceVersion"].ToString ().Replace("\"", ""),
+				metadata ["creationTimestamp"].ToString ().Replace("\"", ""),
 				label
 			);
-		});
+		}, delegate(string name) {  }
+		);
 		return _meta;
 	}
 
@@ -54,7 +46,7 @@ public class PodInfo : MonoBehaviour {
 				volumes,
 				containers,
 				specs ["nodeName"].ToString ().Replace("\"", "")
-				);
+			);
 		});
 		return _spec;
 	}
@@ -81,10 +73,8 @@ public class PodInfo : MonoBehaviour {
 				podIP,
 				statuses ["startTime"].ToString ().Replace("\"", ""),
 				containerStatuses
-				);
-		},  // Allow null values
-			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
-			});
+			);
+		});
 		return _status;
 	}
 
@@ -98,7 +88,7 @@ public class PodInfo : MonoBehaviour {
 					thisContainer ["image"].ToString ().Replace("\"", ""),
 					thisContainer ["resources"].ToString ().Replace("\"", ""),
 					thisVolumeMount
-					);
+				);
 			}
 		});
 		return _container;
@@ -113,7 +103,7 @@ public class PodInfo : MonoBehaviour {
 					theseConditions ["status"].ToString ().Replace("\"", ""),
 					theseConditions ["lastProbeTime"].ToString ().Replace("\"", ""),
 					theseConditions ["lastTransitionTime"].ToString ().Replace("\"", "")
-					);
+				);
 			}
 		});
 		return _condition;
@@ -188,7 +178,7 @@ public class PodInfo : MonoBehaviour {
 		},  // Allow null values
 			delegate(string name) {  // 'name' will be equal to the name of the missing field - "itemsList"
 				Debug.LogWarning("no itemsList(s)");
-		});
+			});
 		return volumesList;
 	}
 
@@ -208,35 +198,42 @@ public class PodInfo : MonoBehaviour {
 		return labelsList;
 	}
 
-	/*void accessData(JSONObject obj){
-		switch(obj.type){
-		case JSONObject.Type.OBJECT:
-			for(int i = 0; i < obj.list.Count; i++){
-				string key = (string)obj.keys[i];
-				JSONObject j = (JSONObject)obj.list[i];
-				Debug.Log("Key: "+key);
-				accessData(j);
-			}
-			break;
-		case JSONObject.Type.ARRAY:
-			foreach(JSONObject j in obj.list){
-				accessData(j);
-			}
-			break;
-		case JSONObject.Type.STRING:
-			Debug.Log("Val: "+obj.str);
-			break;
-		case JSONObject.Type.NUMBER:
-			Debug.Log("Val: "+obj.n);
-			break;
-		case JSONObject.Type.BOOL:
-			Debug.Log("Val: "+obj.b);
-			break;
-		case JSONObject.Type.NULL:
-			Debug.Log("NULL");
-			break;
-			
+
+	Color startColor;
+	Color endColor;
+	float duration = 0.25f; // duration in seconds
+	float t = 0; // lerp control variable
+
+	IEnumerator ChangePodLook() {
+		if (status.phase == "Starting") {
+			startColor = podMaterial.color;
+			endColor = new Color (190f/255f, 237f/255f, 249f/255f);
+			t = 0;
+		} else if(status.phase == "Running") {
+			startColor = podMaterial.color;
+			endColor = new Color (0f, 185f/255f, 228f/255f);
+			t = 0;
+		} else if(status.phase == "Canceled") {
+			startColor = podMaterial.color;
+			endColor = new Color (1f, 0f, 0f);
+			t = 0;
 		}
-	}*/
-	
+		yield return null;
+	}
+
+	void Update() {
+		if (t < 1) {  // Only run it when there's a fade that needs happening
+			//Debug.Log ("running");
+			StartCoroutine(Fade ());
+		}
+	}
+
+	IEnumerator Fade() {
+		podMaterial.color = Color.Lerp(startColor, endColor, t);
+		if (t < 1){ // While t below the end limit
+			t += Time.deltaTime/duration;  // Increment it at the desired rate every update
+		}
+		yield return null;
+	}
+
 }
