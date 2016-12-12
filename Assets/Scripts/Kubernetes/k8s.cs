@@ -133,37 +133,46 @@ namespace Kubernetes {
 	[System.Serializable] // Show it in the Inspector
 	public class Spec {
 		public List<Volumes> volumes;
-		public Containers containers;
+		public List<Containers> containers;
 		public string nodeName;
 		
 		// Constructors
-		public Spec(List<Volumes> volumes, Containers containers, string nodeName) {
+		public Spec(List<Volumes> volumes, List<Containers> containers, string nodeName) {
 			this.volumes = volumes;
 			this.containers = containers;
 			this.nodeName = nodeName;
 		}
 		public Spec() {  // Allow for New() instantiation
 			this.volumes = new List<Volumes>();
-			this.containers = new Containers();
+			this.containers = new List<Containers>();
 			this.nodeName = "";
 		}
 
 		public static bool operator ==(Spec first, Spec second) {
 			return (
 				CheckMatch(first.volumes, second.volumes) &&
-				first.containers == second.containers &&
+				CheckMatch2(first.containers, second.containers) &&
 				first.nodeName == second.nodeName
 			);
 		}
 		public static bool operator !=(Spec first, Spec second) {
 			return !(
 				CheckMatch(first.volumes, second.volumes) &&
-				first.containers == second.containers &&
+				CheckMatch2(first.containers, second.containers) &&
 				first.nodeName == second.nodeName
 			);
 		}
 
 		static bool CheckMatch(List<Volumes> l1, List<Volumes> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
+		}
+		static bool CheckMatch2(List<Containers> l1, List<Containers> l2) {
 			if (l1.Count != l2.Count)
 				return false;
 			for (int i = 0; i < l1.Count; i++) {
@@ -223,6 +232,31 @@ namespace Kubernetes {
 			return true;
 		}
 	}
+
+	/*[System.Serializable] // Show it in the Inspector
+	public class ContainersList {
+		public List<Containers> volumeMounts = new List<Containers>();
+		public ContainersList(List<Containers> volMounts) {
+			this.volumeMounts = volMounts;
+		}
+		//public ContainersList(Containers volMounts) { }
+		public static bool operator ==(ContainersList first, ContainersList second) {
+			return (CheckMatch(first.volumeMounts, second.volumeMounts));
+		}
+		public static bool operator !=(ContainersList first, ContainersList second) {
+			return !(CheckMatch(first.volumeMounts, second.volumeMounts));
+		}
+		static bool CheckMatch(List<Containers> l1, List<VolumeMounts> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
+		}
+	}*/
+
 
 	// PodList -> Items -> Spec -> Volumes
 	[System.Serializable] // Show it in the Inspector

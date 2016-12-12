@@ -47,7 +47,7 @@ public class PodArray : MonoBehaviour {
 	public Spec SpecJSON(JSONObject spec) {
 		Spec _spec = new Spec ();
 		spec.GetField ("spec", delegate(JSONObject specs) {
-			Containers containers = ContainersJSON(specs);
+			List<Containers> containers = ContainersJSON(specs);
 			List<Volumes> volumes = VolumesJSON(specs);
 			_spec = new Spec (
 				volumes,
@@ -87,17 +87,19 @@ public class PodArray : MonoBehaviour {
 		return _status;
 	}
 
-	public Containers ContainersJSON(JSONObject container) {
-		Containers _container = new Containers ();
+	public List<Containers> ContainersJSON(JSONObject container) {
+		List<Containers> _container = new List<Containers>();
+		//Containers _container = new Containers ();
 		container.GetField ("containers", delegate(JSONObject containers) {
 			foreach(JSONObject thisContainer in containers) {
 				List<VolumeMounts> thisVolumeMount = VolumeMountsJSON(thisContainer);
-				_container = new Containers (
+				Containers innerContainer = new Containers (
 					thisContainer ["name"].ToString ().Replace("\"", ""),
 					thisContainer ["image"].ToString ().Replace("\"", ""),
 					thisContainer ["resources"].ToString ().Replace("\"", ""),
 					thisVolumeMount
 					);
+				_container.Add(innerContainer);
 			}
 		});
 		return _container;

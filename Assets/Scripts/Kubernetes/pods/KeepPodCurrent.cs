@@ -40,7 +40,7 @@ public class KeepPodCurrent : MonoBehaviour {
 	public Spec SpecJSON(JSONObject spec) {
 		Spec _spec = new Spec ();
 		spec.GetField ("spec", delegate(JSONObject specs) {
-			Containers containers = ContainersJSON(specs);
+			List<Containers> containers = ContainersJSON(specs);
 			List<Volumes> volumes = VolumesJSON(specs);
 			_spec = new Spec (
 				volumes,
@@ -78,21 +78,28 @@ public class KeepPodCurrent : MonoBehaviour {
 		return _status;
 	}
 
-	public Containers ContainersJSON(JSONObject container) {
-		Containers _container = new Containers ();
-		container.GetField ("containers", delegate(JSONObject containers) {
-			foreach(JSONObject thisContainer in containers) {
-				List<VolumeMounts> thisVolumeMount = VolumeMountsJSON(thisContainer);
-				_container = new Containers (
-					thisContainer ["name"].ToString ().Replace("\"", ""),
-					thisContainer ["image"].ToString ().Replace("\"", ""),
-					thisContainer ["resources"].ToString ().Replace("\"", ""),
+			
+	public List<Containers> ContainersJSON(JSONObject containerz) {
+		List<Containers> containerList = new List<Containers>();
+		containerz.GetField ("containers", delegate(JSONObject containers) {
+			foreach(JSONObject theseContainers in containers) {
+				List<VolumeMounts> thisVolumeMount = VolumeMountsJSON(theseContainers);
+				Containers thisContainer = new Containers (
+					theseContainers ["name"].ToString ().Replace("\"", ""),
+					theseContainers ["image"].ToString ().Replace("\"", ""),
+					theseContainers ["resources"].ToString ().Replace("\"", ""),
 					thisVolumeMount
 				);
+				containerList.Add(thisContainer);
 			}
 		});
-		return _container;
+		return containerList;
 	}
+
+
+
+
+
 
 	public Conditions ConditionsJSON(JSONObject conditions) {
 		Conditions _condition = new Conditions ();
