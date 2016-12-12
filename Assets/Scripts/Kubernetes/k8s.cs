@@ -325,10 +325,10 @@ namespace Kubernetes {
 		public string hostIP;
 		public string podIP;
 		public string startTime;
-		public ContainerStatuses containerStatuses;
+		public List<ContainerStatuses> containerStatuses;
 		
 		// Constructors
-		public Status(string phase, Conditions conditions, string hostIP, string podIP, string startTime, ContainerStatuses containerStatuses) {
+		public Status(string phase, Conditions conditions, string hostIP, string podIP, string startTime, List<ContainerStatuses> containerStatuses) {
 			this.phase = phase;
 			this.conditions = conditions;
 			this.hostIP = hostIP;
@@ -342,7 +342,7 @@ namespace Kubernetes {
 			this.hostIP = "";
 			this.podIP = "";
 			this.startTime = "";
-			this.containerStatuses = new ContainerStatuses();
+			this.containerStatuses = new List<ContainerStatuses>();
 		}
 		public static bool operator ==(Status first, Status second) {
 			return (
@@ -351,7 +351,7 @@ namespace Kubernetes {
 				first.hostIP == second.hostIP &&
 				first.podIP == second.podIP &&
 				first.startTime == second.startTime &&
-				first.containerStatuses == second.containerStatuses
+				CheckMatch(first.containerStatuses, second.containerStatuses)
 			);
 		}
 		public static bool operator !=(Status first, Status second) {
@@ -361,8 +361,17 @@ namespace Kubernetes {
 				first.hostIP == second.hostIP &&
 				first.podIP == second.podIP &&
 				first.startTime == second.startTime &&
-				first.containerStatuses == second.containerStatuses
+				CheckMatch(first.containerStatuses, second.containerStatuses)
 			);
+		}
+		static bool CheckMatch(List<ContainerStatuses> l1, List<ContainerStatuses> l2) {
+			if (l1.Count != l2.Count)
+				return false;
+			for (int i = 0; i < l1.Count; i++) {
+				if (l1[i] != l2[i])
+					return false;
+			}
+			return true;
 		}
 	}
 

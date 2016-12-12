@@ -62,7 +62,7 @@ public class PodArray : MonoBehaviour {
 		Status _status = new Status ();
 		status.GetField ("status", delegate(JSONObject statuses) {
 			Conditions conditions = ConditionsJSON (statuses);
-			ContainerStatuses containerStatuses = ContainerStatusesJSON (statuses);
+			List<ContainerStatuses> containerStatuses = ContainerStatusesJSON (statuses);
 			string hostIP;
 			string podIP;
 			if(statuses ["hostIP"] != null)
@@ -120,11 +120,11 @@ public class PodArray : MonoBehaviour {
 		return _condition;
 	}
 
-	public ContainerStatuses ContainerStatusesJSON(JSONObject containerStatuses) {
-		ContainerStatuses _condition = new ContainerStatuses ();
+	public List<ContainerStatuses> ContainerStatusesJSON(JSONObject containerStatuses) {
+		List<ContainerStatuses> _condition = new List<ContainerStatuses> ();
 		containerStatuses.GetField ("containerStatuses", delegate(JSONObject _containerStatuses) {
 			foreach(JSONObject theseContainerStatuses in _containerStatuses) {
-				_condition = new ContainerStatuses (
+				ContainerStatuses conStat = new ContainerStatuses (
 					theseContainerStatuses ["name"].ToString ().Replace("\"", ""),
 					theseContainerStatuses ["state"].ToString ().Replace("\"", ""),
 					theseContainerStatuses ["lastState"].ToString ().Replace("\"", ""),
@@ -134,6 +134,7 @@ public class PodArray : MonoBehaviour {
 					theseContainerStatuses ["imageID"].ToString ().Replace("\"", ""),
 					theseContainerStatuses ["containerID"].ToString ().Replace("\"", "")
 				);
+				_condition.Add(conStat);
 			}
 		});
 		return _condition;
