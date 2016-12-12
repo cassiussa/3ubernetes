@@ -14,16 +14,18 @@ public class UpdateThisPod : MonoBehaviour {
 
 	public Items item;
 	ThisPod thisPod;
-	KeepPodCurrent keepPodCurrent;
+	//KeepPodCurrent keepPodCurrent;
 
 	void Awake() {
 		thisPod = GetComponent<ThisPod> ();
-		keepPodCurrent = GetComponent<KeepPodCurrent> ();
+		//keepPodCurrent = GetComponent<KeepPodCurrent> ();
+
 	}
 	// Called by PodInstantiation.cs
 	public void ReceiveData (Items passedItem) {
 		item = passedItem;
 		item.gameObject = this.gameObject;
+		ChangePodLook();
 	}
 	
 	// Update is called once per frame
@@ -47,21 +49,22 @@ public class UpdateThisPod : MonoBehaviour {
 
 	public void ChangePodLook() {
 		//Debug.LogError ("item.status.phase = " + item.status.phase);
-		if (thisPod.item.status.phase == "Starting") {
-			startColor = podMaterial.color;
+		startColor = podMaterial.color;
+		t = 0f;
+		if (thisPod.item.status.phase == "Starting" || thisPod.item.status.phase == "Pending") {
 			endColor = new Color (190f / 255f, 237f / 255f, 249f / 255f);
-			t = 0f;
 		} else if (thisPod.item.status.phase == "Running") {
-			Debug.Log ("*****************It's running");
-			startColor = podMaterial.color;
 			endColor = new Color (0f, 185f / 255f, 228f / 255f);
-			t = 0f;
-		} else if (thisPod.item.status.phase == "Canceled") {
-			startColor = podMaterial.color;
+		} else if (thisPod.item.status.phase == "Succeeded") {
+			endColor = new Color (1f, 0.5f, 0f);
+		} else if (thisPod.item.status.phase == "Failed") {
 			endColor = new Color (1f, 0f, 0f);
-			t = 0f;
+			if (thisPod.item.status.conditions.type == "") {
+				endColor = new Color (0f, 0f, 0f);
+			}
 		} else {
 			Debug.LogError ("Some other phase", gameObject);
+
 		}
 		//yield return null;
 	}

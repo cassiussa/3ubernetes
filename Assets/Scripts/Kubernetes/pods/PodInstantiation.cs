@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic; // for List types
+
 using Kubernetes;
 
 public class PodInstantiation : MonoBehaviour {
 
 	float pos = 0f;
-	public void CreatePod (Items item, Hashtable headers) {
+	public void CreatePod (Items item, Dictionary<string,string> headers) {
 		pos += 10f;
 		GameObject pod = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		Material mat = new Material (Shader.Find("Diffuse"));

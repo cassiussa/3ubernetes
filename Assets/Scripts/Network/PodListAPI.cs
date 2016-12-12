@@ -1,5 +1,6 @@
 ﻿// Get the latest webcam shot from outside "Friday's" in Times Square
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic; // for List types
 using Kubernetes;
@@ -7,7 +8,7 @@ using Kubernetes;
 public class PodListAPI : MonoBehaviour {
 
 	public PodArray podArray;
-	PodArray _cachedPodArray;
+	//PodArray _cachedPodArray;
 	public string apiKey;
 	//public List<string> podResourceVersions = new List<string>();
 
@@ -19,7 +20,8 @@ public class PodListAPI : MonoBehaviour {
 	bool doneOnce = false;
 	public PodInstantiation podInstantiation;
 	WWW thisWwwCall;
-	Hashtable headers;
+	Dictionary<string, string> headers = new Dictionary<string, string>();
+
 	//headers.Add("Header_key", "Header_val");
 	//www = new WWW("http://localhost/getpostheaders", null, headers);
 
@@ -29,7 +31,7 @@ public class PodListAPI : MonoBehaviour {
 	}
 
 	void Start() {
-		headers = new Hashtable();
+		headers = new Dictionary<string, string>();
 		headers.Add ("Authorization", "Bearer " + apiKey);
 
 		fullURL = url+"/api/v1/pods";
@@ -79,15 +81,6 @@ public class PodListAPI : MonoBehaviour {
 		}
 		*/
 
-
-
-
-
-		/*if (label1 == label2) {
-			Debug.Log ("equal");
-		} else {
-			Debug.Log ("not equal");
-		}*/
 	}
 
 
@@ -98,7 +91,7 @@ public class PodListAPI : MonoBehaviour {
 
 		// The API check is complete
 		if (thisWwwCall.isDone) {
-
+			
 			// Create new text entries
 			receivedText = thisWwwCall.text;
 			cleanedText = PurgeOuterObject (thisWwwCall.text);
@@ -119,9 +112,11 @@ public class PodListAPI : MonoBehaviour {
 					podArray.changedPods = new List<Items> ();
 					podArray.BuildJSON (receivedText, podArray.changedPods);  // To PodInfo.cs
 					// We should compare the new to the old, individually
+					bool noMatches = true;
 					foreach (Items changedPods in podArray.changedPods) {
 						foreach (Items currentPods in podArray.pods) {
 							if (changedPods.name == currentPods.name) {
+								noMatches = false;
 								changedPods.gameObject = currentPods.gameObject;
 								// Now check to see if the Items are equal
 								if (currentPods != changedPods) {
@@ -133,10 +128,14 @@ public class PodListAPI : MonoBehaviour {
 							}
 						}
 					}
+
+					// if(noMatches == true) {
+						//We know it has been destroyed/deleted, so perform that action
+					//}
 				}
 			}
 
-			_cachedPodArray = podArray;
+			//_cachedPodArray = podArray;
 			_cachedCleanedText = cleanedText;
 
 			// Run the API check every 'coroutineWaitInterval' seconds
@@ -148,7 +147,7 @@ public class PodListAPI : MonoBehaviour {
 	}
 
 	IEnumerator CheckForChange() {
-		yield return new WaitForSeconds(2f);
+		//yield return new WaitForSeconds(2f);
 		thisWwwCall = new WWW(fullURL, null, headers);
 		yield return true; // May want to remove this later
 	}

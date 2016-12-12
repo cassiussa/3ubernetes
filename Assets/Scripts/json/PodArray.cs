@@ -5,8 +5,6 @@ using System;
 using Kubernetes;
 
 public class PodArray : MonoBehaviour {
-
-	string encodedString = ""; // "{\"field1\": 0.5,\"field2\": \"sampletext\",\"field3\": [1,2,3]}";
 	public List<Items> pods = new List<Items>();
 	public List<Items> changedPods = new List<Items>();
 

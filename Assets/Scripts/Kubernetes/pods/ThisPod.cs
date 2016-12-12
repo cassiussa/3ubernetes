@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic; // for List types
 using Kubernetes;
 
 public class ThisPod : MonoBehaviour {
@@ -11,10 +12,10 @@ public class ThisPod : MonoBehaviour {
 	public string apiText = "";
 
 	public WWW www;
-	public Hashtable headers;
+	public Dictionary<string, string> headers = new Dictionary<string, string>();
 
-	float startCoroutineTime = 0f;
-	float coroutineWaitInterval = 1f;
+	//float startCoroutineTime = 0f;
+	//float coroutineWaitInterval = 1f;
 
 	// Called by PodInstantiation.cs
 	public void ReceiveData (Items passedItem) {
